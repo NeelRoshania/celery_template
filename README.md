@@ -51,8 +51,9 @@ If you run into issues with `psycopg2`, consider the following;
 
 References
 1. Celery
-    - [First steps]('https://docs.celeryq.dev/en/stable/getting-started/first-steps-with-celery.html)
-    
+    - [First steps]('https://docs.celeryq.dev/en/stable/getting-started/first-steps-with-celery.html')
+    - [API Reference](https://docs.celeryq.dev/en/stable/reference/index.html)
+
 2. PostgreSQL
     - [Client Applications](https://www.postgresql.org/docs/current/reference-client.html) 
 	- `ls -al /usr/lib/postgresql/15/bin`
@@ -63,3 +64,6 @@ References
         ```
         - Check that the server is running, `service --status-all`. 
             - Restart if neccesary, `sudo service postgresql restart`
+
+3. Others
+    - [subprocess](https://docs.python.org/3/library/subprocess.html#) - Subprocess Management

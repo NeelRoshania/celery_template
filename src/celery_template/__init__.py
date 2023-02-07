@@ -14,7 +14,8 @@ cparser = configparser.ConfigParser()
 # celery app
 app = Celery(
     'tasks', 
-    broker = 'pyamqp://guest@localhost//' 
+    broker = 'pyamqp://guest@localhost//',
+    include=['celery_template.tasks']
     )
 
 # Optional configuration, see the application user guide.

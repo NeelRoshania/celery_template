@@ -14,6 +14,8 @@ Features
 2. `cd .env/scripts ` then `activate`
 3. Modify `setup.cfg` and `src`
 4. `pip3 install -e .`
+5. `sudo apt-get install rabbitmq-server` then `sudo service rabbitmq-server restart`
+6. `celery -A tasks worker --loglevel=INFO` - to start the worker as a seperate screen
 
 If you run into issues with `psycopg2`, consider the following;
 1. `sudo chmod 774 psycopg2_setup.sh`

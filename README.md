@@ -16,6 +16,7 @@ Features
 4. `pip3 install -e .`
 5. `sudo apt-get install rabbitmq-server` then `sudo service rabbitmq-server restart`
 6. `celery -A tasks worker --loglevel=INFO` - to start the worker as a seperate screen
+7. Define [result backend](https://docs.celeryq.dev/en/stable/getting-started/first-steps-with-celery.html#keeping-results)
 
 If you run into issues with `psycopg2`, consider the following;
 1. `sudo chmod 774 psycopg2_setup.sh`
@@ -27,7 +28,7 @@ If you run into issues with `psycopg2`, consider the following;
 2. Run `install_start_server.sh` - this will install and start the service
 3. Check that the service is running `[ + ]  postgresql`
     - `service --status-all`
-3. `sudo service postgresql restart` - to restart the service if required
+4. `sudo service postgresql restart` - to restart the service if required
 
 **Jupyter kernel setup**
 1. `jupyter kernelspec uninstall .example_env` - remove existing kernels called .example_env
@@ -55,6 +56,7 @@ References
 1. Celery
     - [First steps]('https://docs.celeryq.dev/en/stable/getting-started/first-steps-with-celery.html')
     - [API Reference](https://docs.celeryq.dev/en/stable/reference/index.html)
+    - [Database backend settings](https://docs.celeryq.dev/en/latest/userguide/configuration.html#database-backend-settings)
 
 2. PostgreSQL
     - [Client Applications](https://www.postgresql.org/docs/current/reference-client.html) 

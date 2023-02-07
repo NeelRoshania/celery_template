@@ -1,6 +1,6 @@
 import psycopg2
 
-from python_template import logger
+from celery_template import logger
 from psycopg2 import OperationalError
 
 def psql_connection(

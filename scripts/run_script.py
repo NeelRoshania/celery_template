@@ -1,10 +1,7 @@
-import argparse
-from python_template import logger
+from celery_template.funcs import specific_func
 
 if __name__ == "__main__":
-
-    # parse arguments
-    logger.info('Setup complete.')
+    specific_func('Hello celery!')
     
 
     

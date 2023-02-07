@@ -1,13 +1,11 @@
-# python-template
-Boiler plate scripted implementation for python modules
+# celery-template
+A template to manage workflows using a distributed task queue system
 
 Features
-- csv and text file read/write python implementation
-- PostgreSQL integration
-- aws integration
-    - s3 read only
+- TBD
 
-### References
+### Use cases
+- TBD
 
 ### Installation guide
 
@@ -50,7 +48,12 @@ If you run into issues with `psycopg2`, consider the following;
         - `ssh -T git@github.com`. See [Github SSH Authentication](https://docs.github.com/en/authentication).
 2. Authentication troubleshooting
     - [Permission denied (publickey)](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
-3. PostgreSQL commands
+
+References
+1. Celery
+    - [First steps]('https://docs.celeryq.dev/en/stable/getting-started/first-steps-with-celery.html)
+    
+2. PostgreSQL
     - [Client Applications](https://www.postgresql.org/docs/current/reference-client.html) 
 	- `ls -al /usr/lib/postgresql/15/bin`
     - Debugging

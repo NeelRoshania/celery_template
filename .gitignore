@@ -132,7 +132,7 @@ dmypy.json
 data/
 
 # logs
-logs/
+*.log
 
 # config files
 conf/pipeline_hidden.conf

@@ -15,7 +15,8 @@ cparser = configparser.ConfigParser()
 app = Celery(
     'tasks', 
     broker = 'pyamqp://guest@localhost//',
-    include=['celery_template.tasks']
+    include = ['celery_template.tasks'],
+    backend = 'db+postgresql://celery_user:celery_pass@localhost/celery_db'
     )
 
 # Optional configuration, see the application user guide.

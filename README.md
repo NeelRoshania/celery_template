@@ -23,6 +23,23 @@ If you run into issues with `psycopg2`, consider the following;
 2. `./psycopg2_setup.sh`
 3. `pip3 install psycopg2`
 
+**PostgreSQL backend database setup**
+1. Create role, database and assign privalages
+2. [Define connection string](https://docs.celeryq.dev/en/latest/userguide/configuration.html#database-backend-settings) per SQLAlchemy
+
+**Task Queue setup** (to be refined)
+1. Start services
+    - postgresql: `service postgresql restart`
+    - rabbitmq-server, `service rabbitmq-server restart`
+2. Check message queues: `rabbitmqctl list_queues name messages messages_ready messages_unacknowledged`
+3. Start worker, `celery -A celery_template worker --loglevel=INFO`
+4. Run tests
+5. Check tasks on backend database - `celery_taskmeta`
+    - If new task_id's are not generated, 
+        - check message queues
+        - ensure celery worker server is running
+
+
 **PostgreSQL installation & setup**
 1. See (Ubuntu PostgreSQL)[https://help.ubuntu.com/community/PostgreSQL] for complete guide
 2. Run `install_start_server.sh` - this will install and start the service
@@ -57,6 +74,8 @@ References
     - [First steps]('https://docs.celeryq.dev/en/stable/getting-started/first-steps-with-celery.html')
     - [API Reference](https://docs.celeryq.dev/en/stable/reference/index.html)
     - [Database backend settings](https://docs.celeryq.dev/en/latest/userguide/configuration.html#database-backend-settings)
+    - [Inspecting queues](https://docs.celeryq.dev/en/stable/userguide/monitoring.html#inspecting-queues)
+        - `rabbitmqctl list_queues name messages messages_ready messages_unacknowledged`
 
 2. PostgreSQL
     - [Client Applications](https://www.postgresql.org/docs/current/reference-client.html) 

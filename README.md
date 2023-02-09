@@ -76,6 +76,7 @@ References
     - [Database backend settings](https://docs.celeryq.dev/en/latest/userguide/configuration.html#database-backend-settings)
     - [Inspecting queues](https://docs.celeryq.dev/en/stable/userguide/monitoring.html#inspecting-queues)
         - `rabbitmqctl list_queues name messages messages_ready messages_unacknowledged`
+    - [Logging](https://docs.celeryq.dev/en/latest/userguide/tasks.html#logging)
 
 2. PostgreSQL
     - [Client Applications](https://www.postgresql.org/docs/current/reference-client.html) 
@@ -90,3 +91,4 @@ References
 
 3. Others
     - [subprocess](https://docs.python.org/3/library/subprocess.html#) - Subprocess Management
+    - [Kill processes by command name](https://stackoverflow.com/questions/160924/how-can-i-kill-a-process-by-name-instead-of-pid-on-linux)

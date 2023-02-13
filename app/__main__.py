@@ -5,9 +5,9 @@ LOGGER = logging.getLogger(__name__) # this logger is defined seperately, see lo
 
 if __name__ == "__main__":
     
-    LOGGER.info('starting celery_template app')
-    
     # run celery worker as a subprocess
+    LOGGER.info('starting subprocess celery worker')
+
     subprocess.Popen(
                         [
                             "celery",

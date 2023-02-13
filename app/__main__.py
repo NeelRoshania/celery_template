@@ -1,8 +1,6 @@
 import subprocess
 import logging
 
-from celery_template import logger
-
 LOGGER = logging.getLogger(__name__) # this logger is defined seperately, see logging.conf
 
 if __name__ == "__main__":

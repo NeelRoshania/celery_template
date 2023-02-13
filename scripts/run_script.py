@@ -1,8 +1,13 @@
+import argparse
+import logging
+
 from celery_template.funcs import specific_func
 
+LOGGER = logging.getLogger(__name__) # this logger is defined seperately, see logging.conf
+
 if __name__ == "__main__":
-    specific_func('Hello celery!')
-    
 
-    
+    LOGGER.info('testing scripted implementation')
 
+    # parse arguments
+    specific_func('Module setup! (You shouldn\'t see this log on the console)')

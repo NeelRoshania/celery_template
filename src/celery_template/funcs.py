@@ -1,4 +1,6 @@
-from celery_template import logger
+import logging
+
+LOGGER = logging.getLogger(__name__) # this logger is defined seperately, see logging.conf
 
 def specific_func(text:str) -> None:
 
@@ -6,5 +8,6 @@ def specific_func(text:str) -> None:
         Service to....
 
     """
-    logger.info(text)
+    LOGGER.debug(text)
+
     return None

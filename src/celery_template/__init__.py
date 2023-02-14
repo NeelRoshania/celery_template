@@ -6,6 +6,7 @@ from celery import Celery
 
 # setup
 logging.config.fileConfig('conf/logging.conf', defaults={'fileHandlerLog': 'logs/celery_template.log'})
+# logger = logging.getLogger(__name__)
 
 # objects to make available when this package is imported
 cparser = configparser.ConfigParser()

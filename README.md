@@ -14,9 +14,11 @@ Features
 2. `cd .env/scripts ` then `activate`
 3. Modify `setup.cfg` and `src`
 4. `pip3 install -e .`
-5. `sudo apt-get install rabbitmq-server` then `sudo service rabbitmq-server restart`
-6. `celery -A tasks worker --loglevel=INFO` - to start the worker as a seperate screen
-7. Define [result backend](https://docs.celeryq.dev/en/stable/getting-started/first-steps-with-celery.html#keeping-results)
+5. Setup desired broker and backend 
+	- broker:`sudo apt-get install rabbitmq-server` then `sudo service rabbitmq-server restart`
+	- backend: See PostgreSQL backend database setup
+6. `python3 -m app` as a seperate screen
+7. Define [celery configurations](https://github.com/NeelRoshania/celery_template/blob/main/src/celery_template/__init__.py#L14)
 
 If you run into issues with `psycopg2`, consider the following;
 1. `sudo chmod 774 psycopg2_setup.sh`

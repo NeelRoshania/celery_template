@@ -34,11 +34,12 @@ If you run into issues with `psycopg2`, consider the following;
 2. Check message queues: `rabbitmqctl list_queues name messages messages_ready messages_unacknowledged`
 3. Start worker, `celery -A celery_template worker --loglevel=INFO`
 4. Run tests
-5. Check tasks on backend database - `celery_taskmeta`
-    - If new task_id's are not generated, 
-        - check message queues
-        - ensure celery worker server is running
-
+	- `res = add.apply_async(args=(5, 7), queue="celery_template_queue")`
+	- Check tasks on backend database - `celery_taskmeta`
+    		- If new task_id's are not generated, 
+        		- check message queues
+        	- ensure celery worker server is running
+	- Check logs generated in worker server 
 
 **PostgreSQL installation & setup**
 1. See (Ubuntu PostgreSQL)[https://help.ubuntu.com/community/PostgreSQL] for complete guide
@@ -77,6 +78,8 @@ References
     - [Inspecting queues](https://docs.celeryq.dev/en/stable/userguide/monitoring.html#inspecting-queues)
         - `rabbitmqctl list_queues name messages messages_ready messages_unacknowledged`
     - [Logging](https://docs.celeryq.dev/en/latest/userguide/tasks.html#logging)
+    - [Configuration and defaults](https://docs.celeryq.dev/en/stable/userguide/configuration.html)
+    - [Routing Tasks](https://docs.celeryq.dev/en/stable/userguide/configuration.html)		
 
 2. PostgreSQL
     - [Client Applications](https://www.postgresql.org/docs/current/reference-client.html) 

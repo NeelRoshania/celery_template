@@ -14,6 +14,8 @@ if __name__ == "__main__":
                             "-A",
                             "celery_template",
                             "worker",
+                            "-Q",
+                            "celery_template_queue",
                             "--loglevel=DEBUG"
                         ]
                     )

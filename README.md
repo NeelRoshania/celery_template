@@ -36,7 +36,7 @@ If you run into issues with `psycopg2`, consider the following;
 2. Check message queues: `rabbitmqctl list_queues name messages messages_ready messages_unacknowledged`
 3. Start worker, `celery -A celery_template worker --loglevel=INFO`
 4. Run tests
-	- `res = add.apply_async(args=(5, 7), queue="celery_template_queue")`
+	- Run a task: `res = add.apply_async(args=(5, 7), queue="celery_template_queue")`
 	- Check tasks on backend database - `celery_taskmeta`
     		- If new task_id's are not generated, 
         		- check message queues

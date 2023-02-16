@@ -16,9 +16,7 @@ print(f'logger: {logger.name}')
 
 @app.task(bind=True)
 def add(self, x, y):
-    # print('lol')
-    print(f'{self.request.id}: additing {x} and {y}')
-    logger.info(f'{self.request.id}: adding ({x}, {y})')
+    logger.info(f'task_id: {self.request.id}: adding ({x}, {y})') # this logs to worker server, not file...yet
     return x + y
 
 @app.task

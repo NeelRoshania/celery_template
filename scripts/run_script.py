@@ -5,6 +5,9 @@ from celery_template.funcs import specific_func
 
 LOGGER = logging.getLogger(__name__) # this logger is defined seperately, see logging.conf
 
+def main():
+    return None
+
 if __name__ == "__main__":
 
     LOGGER.info('testing scripted implementation')

@@ -6,7 +6,7 @@ from celery import Celery
 from kombu import Queue, Exchange
 
 # setup
-logging.config.fileConfig('conf/logging.conf', defaults={'fileHandlerLog': 'logs/celery_template.log'})
+logging.config.fileConfig('conf/logging.conf', defaults={'fileHandlerLog': f'logs/{__name__}.log'})
 LOGGER = logging.getLogger(__name__)
 cparser = configparser.ConfigParser() # objects to make available when this package is imported
 
@@ -23,6 +23,7 @@ class CeleryConfig:
 
 # start application
 app = Celery('tasks')
+LOGGER.info(f'celery-instance:{app} - celery app instantiated')
 
 # set app configuration
 app.config_from_object(CeleryConfig)

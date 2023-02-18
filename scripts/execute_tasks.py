@@ -1,6 +1,7 @@
 import argparse
 import logging
 
+from celery_template import app
 from celery_template.tasks import add
 from kombu.exceptions import OperationalError
 
@@ -13,7 +14,9 @@ from kombu.exceptions import OperationalError
         - timed executions
 
 """
-LOGGER = logging.getLogger(__name__) # will call the __main__ logger
+
+# logging.config.fileConfig('conf/logging.conf', defaults={'fileHandlerLog': f'logs/{__name__}.log'})
+LOGGER = logging.getLogger(__name__) # will call the __main__ logger, which defaults to the logger defined in celery_template.__init__.py
 
 if __name__ == "__main__":
 
@@ -27,9 +30,8 @@ if __name__ == "__main__":
 
     # catch operational errors - perhaps cannot send message to worker
     try:
-        res = add.apply_async(args=(5, 7), queue='celery_template')
-        LOGGER.info(f'res: {res}, dir: {dir(res)}')
+        res = add.apply_async(args=(5, 7), queue='celery_template_queue')
     except OperationalError as e: 
-        LOGGER.debug(f'failed to execute tasks - {e}')
+        LOGGER.debug(f'app:{app} - failed to execute tasks - {e}')
 
     

@@ -1,22 +1,17 @@
 import celery
+import logging
 
 from celery_template import app
 from celery.utils.log import get_task_logger
 
+# logger = logging.getLogger('__name__')
 logger = get_task_logger(__name__)
-
-print(f'logger: {logger.name}')
-
-#@celery.signals.after_setup_logger.connect
-#def on_after_setup_logger(**kwargs):
-#    logger = logging.getLogger('celery')
-#    logger.propagate = True
-#    logger = logging.getLogger('celery.app.trace')
-#    logger.propagate = True
+logging.config.fileConfig('conf/logging.conf', defaults={'fileHandlerLog': f'logs/{__name__}.log'}) # this will call celery_template.tasks
 
 @app.task(bind=True)
 def add(self, x, y):
-    logger.info(f'task_id: {self.request.id}: adding ({x}, {y})') # this logs to worker server, not file...yet
+    logger.info(f'task_id:{self.request.id}, task_group:{self.request.group} - args=({x}, {y})') # can't get celery.utils.log.get_task_logger to work
+    # logger.info(f'args=({x}, {y})') # can't get celery.utils.log.get_task_logger to work
     return x + y
 
 @app.task

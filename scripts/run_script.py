@@ -3,10 +3,8 @@ import logging
 
 from celery_template.funcs import specific_func
 
+logging.config.fileConfig('conf/logging.conf', defaults={'fileHandlerLog': f'logs/scripts.run_script.log'})
 LOGGER = logging.getLogger(__name__) # this logger is defined seperately, see logging.conf
-
-def main():
-    return None
 
 if __name__ == "__main__":
 

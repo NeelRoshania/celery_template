@@ -15,12 +15,12 @@ from kombu.exceptions import OperationalError
 
 """
 
-# logging.config.fileConfig('conf/logging.conf', defaults={'fileHandlerLog': f'logs/{__name__}.log'})
+logging.config.fileConfig('conf/logging.conf', defaults={'fileHandlerLog': f'logs/scripts.execute_tasks.log'})
 LOGGER = logging.getLogger(__name__) # will call the __main__ logger, which defaults to the logger defined in celery_template.__init__.py
 
 if __name__ == "__main__":
 
-    # LOGGER.info('testing scripted implementation')
+    LOGGER.info('starting tasks')
 
     # parse arguments
     parser = argparse.ArgumentParser()

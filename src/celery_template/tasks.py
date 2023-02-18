@@ -5,8 +5,8 @@ from celery_template import app
 from celery.utils.log import get_task_logger
 
 # logger = logging.getLogger('__name__')
-logger = get_task_logger(__name__)
-logging.config.fileConfig('conf/logging.conf', defaults={'fileHandlerLog': f'logs/{__name__}.log'}) # this will call celery_template.tasks
+logger = get_task_logger(__name__) # this should call the logger celery_template.tasks
+logging.config.fileConfig('conf/logging.conf', defaults={'fileHandlerLog': f'logs/{__name__}.log'})
 
 @app.task(bind=True)
 def add(self, x, y):

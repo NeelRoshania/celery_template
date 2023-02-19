@@ -6,8 +6,8 @@ from celery import Celery
 from kombu import Queue, Exchange
 
 # setup
-logging.config.fileConfig('conf/logging.conf', defaults={'fileHandlerLog': f'logs/{__name__}.log'})
 LOGGER = logging.getLogger(__name__)
+
 cparser = configparser.ConfigParser() # objects to make available when this package is imported
 
 ## configuration: read from configparser - https://docs.celeryq.dev/en/stable/userguide/configuration.html

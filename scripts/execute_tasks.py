@@ -15,10 +15,10 @@ from kombu.exceptions import OperationalError
 
 """
 
+logging.config.fileConfig('conf/logging.conf', disable_existing_loggers=False, defaults={'fileHandlerLog': f'logs/{__name__}.log'})
+LOGGER = logging.getLogger(__name__) # this will call the logger __main__ which will log to that referenced in python_template.__init__
 
-def run_script(args):
-
-    LOGGER = logging.getLogger(__name__) # will call the __main__ logger, which defaults to the logger defined in celery_template.__init__.py
+def single_task(args):
 
     LOGGER.info('starting tasks')
 
@@ -26,7 +26,7 @@ def run_script(args):
     try:
         res = add.apply_async(args=(5, 7), queue='celery_template_queue')
     except OperationalError as e: 
-        LOGGER.debug(f'app:{app} - failed to execute tasks - {e}')
+        LOGGER.error(f'app:{app} - failed to execute tasks - {e}')
 
 if __name__ == "__main__":
 
@@ -36,7 +36,7 @@ if __name__ == "__main__":
     parser.add_argument("--optional", "-o", action="store", type=str, default=8000)
     args = parser.parse_args()
 
-    run_script(args)
+    single_task(args)
 
     
 

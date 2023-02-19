@@ -17,6 +17,6 @@ if __name__ == "__main__":
                             "-Q",
                             "celery_template_queue",
                             "--loglevel=DEBUG",
-                            "--logfile=logs/celery.log"
+                            # "--logfile=logs/celery.log"
                         ]
                     )

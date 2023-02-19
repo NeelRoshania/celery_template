@@ -16,6 +16,7 @@ class CeleryConfig:
     result_backend = "db+postgresql://celery_user:celery_pass@localhost/celery_db"
     include = ["celery_template.tasks"]
     event_queue_expires = 3600
+    worker_hijack_root_logger = False
     task_queues = (
             Queue("default", Exchange("default"), routing_key="default"),
             Queue("celery_template_queue", Exchange("celery_template_queue"), routing_key="ctq")

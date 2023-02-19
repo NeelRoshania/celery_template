@@ -42,20 +42,16 @@ def sort_list(self, arr: list) -> dict:
     """
     start_time = time.time()
     
-    sorted_array = bubble_sort(arr)
+    res = bubble_sort(arr)
     
     end_time = time.time()
 
-    logger.info(
-        {
-            "task_description": 'single-sort',
-            "start_time": start_time,
-            "end_time": end_time
-
-        }
-    )
-
-    return sorted_array
+    return {
+        "task_description": 'single-sort',
+        "start_time": start_time,
+        "end_time": end_time,
+        "res": res
+    }
 
 @app.task(bind=True)
 def sort_lists(self, arrs: list) -> None:
@@ -65,19 +61,19 @@ def sort_lists(self, arrs: list) -> None:
     """
 
     start_time = time.time()
+    res = []
 
     for i in enumerate(arrs):
-        sort_list(i[1][1])
+        res.append(sort_list(i[1]))
 
     end_time = time.time()
 
-    logger.info(
-        {
-            "task_description": 'nested-sort',
-            "start_time": start_time,
-            "end_time": end_time
-        }
-    )
+    return {
+        "task_description": 'nested-sort',
+        "start_time": start_time,
+        "end_time": end_time,
+        "res": res
+    }
 
 @app.task(bind=True)
 def add(self, x, y):

@@ -27,9 +27,9 @@ def single_task(args):
         values = np.random.randint(1000, size=int(5e3))
 
         # tasks to run
-        t1 = add.apply_async(args=(5, 7), queue='celery_template_queue')
-        t2 = sort_list.apply_async(args=(values), queue='celery_template_queue')
-        t3 = sort_lists.apply_async(args=(values), queue='celery_template_queue')
+        t1 = add.apply_async(args=[5, 7], queue='celery_template_queue')
+        t2 = sort_list.apply_async(args=[values], queue='celery_template_queue')
+        t3 = sort_lists.apply_async(args=[values], queue='celery_template_queue')
 
         LOGGER.info(f'tasks complete')
 

@@ -1,7 +1,7 @@
 import logging
 # from celery_template import logging
 
-LOGGER = logging.getLogger(__name__) # this calls the celery_template.funcs logger
+LOGGER = logging.getLogger(__name__) # this calls the celery_template.funcs logger - which logs to worker node instance
 
 def specific_func(text:str) -> None:
 

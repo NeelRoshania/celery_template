@@ -2,7 +2,7 @@ import argparse
 import logging
 import numpy as np
 from celery_template import app
-from celery_template.tasks import add, single_sort_task
+from celery_template.tasks import add, sort_list, sort_lists
 from kombu.exceptions import OperationalError
 
 """
@@ -27,9 +27,12 @@ def single_task(args):
         values = np.random.randint(1000, size=int(5e3))
 
         # tasks to run
-        res = add.apply_async(args=(5, 7), queue='celery_template_queue')
-        res = single_sort_task.apply_async(args=(values), queue='celery_template_queue')
-        # res = single_sort_task.apply_async(args=(values), queue='celery_template_queue')
+        t1 = add.apply_async(args=(5, 7), queue='celery_template_queue')
+        t2 = sort_list.apply_async(args=(values), queue='celery_template_queue')
+        t3 = sort_lists.apply_async(args=(values), queue='celery_template_queue')
+
+        LOGGER.info(f'tasks complete')
+
 
     except OperationalError as e: 
         LOGGER.error(f'app:{app} - failed to execute tasks - {e}')

@@ -7,7 +7,7 @@ logger = get_task_logger(__name__) # this should call the logger celery_template
 # logger = logging.getLogger(__name__) # this should call the logger celery_template.tasks
 
 @app.task(bind=True)
-def single_sort_task(arr: list) -> dict:
+def sort_list(self, arr: list) -> dict:
 
     """
     Nested functions
@@ -58,7 +58,7 @@ def single_sort_task(arr: list) -> dict:
     return sorted_array
 
 @app.task(bind=True)
-def nested_sort_tasks(arrs: list) -> None:
+def sort_lists(self, arrs: list) -> None:
 
     """
         Sort multiple list objects
@@ -67,7 +67,7 @@ def nested_sort_tasks(arrs: list) -> None:
     start_time = time.time()
 
     for i in enumerate(arrs):
-        single_sort_task(i[1][1])
+        sort_list(i[1][1])
 
     end_time = time.time()
 

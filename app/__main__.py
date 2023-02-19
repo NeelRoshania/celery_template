@@ -16,6 +16,7 @@ if __name__ == "__main__":
                             "worker",
                             "-Q",
                             "celery_template_queue",
+                            "-f celery.log"
                             "--loglevel=DEBUG"
                         ]
                     )

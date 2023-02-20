@@ -1,5 +1,6 @@
 import argparse
 import logging
+import json
 import numpy as np
 from celery_template import app
 from celery_template.tasks import add, sort_list, sort_lists
@@ -24,12 +25,14 @@ def single_task(args):
 
     # catch operational errors - perhaps cannot send message to worker
     try:
+
         values = np.random.randint(1000, size=int(5e3))
+        svalues = json.dumps(values.tolist()) # Data transferred between clients and workers needs to be serialized - https://docs.celeryq.dev/en/stable/userguide/calling.html#serializers
 
         # tasks to run
-        t1 = add.apply_async(args=[5, 7], queue='celery_template_queue')
-        t2 = sort_list.apply_async(args=[values], queue='celery_template_queue')
-        t3 = sort_lists.apply_async(args=[values], queue='celery_template_queue')
+        # t1 = add.apply_async(args=[5, 7, svalues], queue='celery_template_queue')
+        t2 = sort_list.apply_async(args=[svalues], queue='celery_template_queue')
+        t3 = sort_lists.apply_async(args=[svalues], queue='celery_template_queue')
 
         LOGGER.info(f'tasks complete')
 

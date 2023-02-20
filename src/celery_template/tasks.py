@@ -1,4 +1,5 @@
 import time
+import json
 
 from celery_template import app
 from celery.utils.log import get_task_logger
@@ -19,6 +20,9 @@ def sort_list(self, arr: list) -> dict:
             bubble sort implementation
                 - https://www.programiz.com/dsa/bubble-sort
         """
+        
+        # decode arr to list
+        arr = json.loads(arr) 
 
         # loop to access each array element
         for i in range(len(arr)):
@@ -76,7 +80,7 @@ def sort_lists(self, arrs: list) -> None:
     }
 
 @app.task(bind=True)
-def add(self, x, y):
+def add(self, x, y, arr):
     # logger.info(f'task_id:{self.request.id}, task_group:{self.request.group} - args=({x}, {y})') # can't get celery.utils.log.get_task_logger to work
-    logger.info(f'args=({x}, {y})') # can't get celery.utils.log.get_task_logger to work
+    logger.info(f'args=({x}, {y}, {arr})') # can't get celery.utils.log.get_task_logger to work
     return x + y

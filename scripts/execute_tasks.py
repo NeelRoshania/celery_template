@@ -7,7 +7,6 @@ from celery_template.funcs import generate_test_data
 from celery_template.tasks import add, sort_list, sort_directory
 from celery_template.csv import read_csv, write_csv
 from kombu.exceptions import OperationalError
-from tests.scripts.test_tasks import generate_test_data
 
 """
 

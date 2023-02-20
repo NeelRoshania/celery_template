@@ -1,9 +1,11 @@
 import argparse
 import logging
 import json
-import numpy as np
+import os
+
 from celery_template import app
 from celery_template.tasks import add, sort_list, sort_lists
+from celery_template.csv import read_csv
 from kombu.exceptions import OperationalError
 
 """
@@ -19,21 +21,17 @@ from kombu.exceptions import OperationalError
 logging.config.fileConfig('conf/logging.conf', disable_existing_loggers=False, defaults={'fileHandlerLog': f'logs/{__name__}.log'})
 LOGGER = logging.getLogger(__name__) # this will call the logger __main__ which will log to that referenced in python_template.__init__
 
-def single_task(fpath: str, dir: str):
+def single_task(fpath: str, fpaths: str):
 
     LOGGER.info('starting tasks')
 
     # catch operational errors - perhaps cannot send message to worker
     try:
 
-        # celery tasks expected serialized arguments
-        values = np.random.randint(1000, size=int(5e3))
-        svalues = json.dumps(values.tolist()) # Data transferred between clients and workers needs to be serialized - https://docs.celeryq.dev/en/stable/userguide/calling.html#serializers
-
-        # tasks to run
-        # t1 = add.apply_async(args=[5, 7, svalues], queue='celery_template_queue')
+        # celery tasks expect serialized arguments, not objects - https://docs.celeryq.dev/en/stable/userguide/calling.html#serializers
+        t1 = add.apply_async(args=[5, 7], queue='celery_template_queue')
         t2 = sort_list.apply_async(args=[fpath], queue='celery_template_queue')
-        t3 = sort_lists.apply_async(args=[dir], queue='celery_template_queue')
+        t3 = sort_lists.apply_async(args=[fpaths], queue='celery_template_queue')
 
         LOGGER.info(f'tasks complete')
 
@@ -49,9 +47,12 @@ if __name__ == "__main__":
     parser.add_argument("--optional", "-o", action="store", type=str, default=8000)
     args = parser.parse_args()
 
+    # prepare data arguments
     data_dir = r'tests/data'
+    data_files = [f'{data_dir}/{f}' for f in os.listdir(data_dir)]
 
-    single_task(fpath_data)
+    # run tasks
+    single_task(data_files[1], data_files)
 
     
 

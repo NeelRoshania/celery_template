@@ -46,7 +46,7 @@ def sort_list(self, fpath: str) -> dict:
     start_time = time.time()
     
     arr = read_csv(file_loc=fpath)
-    res = bubble_sort(arr)
+    res = bubble_sort(arr[1]) # argument 1 should be a list[int]
     
     end_time = time.time()
 
@@ -58,7 +58,7 @@ def sort_list(self, fpath: str) -> dict:
     }
 
 @app.task(bind=True)
-def sort_lists(self, dir: list) -> None:
+def sort_lists(self, fpaths: list) -> None:
 
     """
         Sort multiple list objects
@@ -67,8 +67,10 @@ def sort_lists(self, dir: list) -> None:
     start_time = time.time()
     res = []
 
-    for i in enumerate(dir):
-        res.append(sort_list(i[1]))
+    for i in enumerate(fpaths):
+        res.append(
+            sort_list(i[1])
+            )
 
     end_time = time.time()
 
@@ -80,7 +82,7 @@ def sort_lists(self, dir: list) -> None:
     }
 
 @app.task(bind=True)
-def add(self, x, y, arr):
+def add(self, x, y):
     # logger.info(f'task_id:{self.request.id}, task_group:{self.request.group} - args=({x}, {y})') # can't get celery.utils.log.get_task_logger to work
-    logger.info(f'args=({x}, {y}, {arr})') # can't get celery.utils.log.get_task_logger to work
+    logger.info(f'args=({x}, {y})') # can't get celery.utils.log.get_task_logger to work
     return x + y

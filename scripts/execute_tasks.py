@@ -21,7 +21,7 @@ from kombu.exceptions import OperationalError
 logging.config.fileConfig('conf/logging.conf', disable_existing_loggers=False, defaults={'fileHandlerLog': f'logs/{__name__}.log'})
 LOGGER = logging.getLogger(__name__) # this will call the logger __main__ which will log to that referenced in python_template.__init__
 
-def single_task(fpath: str, fpaths: str) -> None:
+def sequential_tasks(fpath: str, fpaths: str) -> None:
 
     LOGGER.info('starting tasks')
 
@@ -46,12 +46,13 @@ if __name__ == "__main__":
     parser.add_argument("--optional", "-o", action="store", type=str, default=8000)
     args = parser.parse_args()
 
-    # prepare data arguments
+    # prepare data
     data_dir = r'tests/data'
+    data_files = generate_test_data(data_dir=data_dir)
+    LOGGER.info(f'test data: {data_files}')
 
     # run tasks
-    data_files = generate_test_data(data_dir=data_dir)
-    single_task(fpath=data_files[1], fpaths=data_files)
+    sequential_tasks(fpath=data_files[1], fpaths=data_files)
 
     
 

@@ -2,16 +2,18 @@ import time
 import json
 
 from celery_template import app
+from celery_template.csv import read_csv
 from celery.utils.log import get_task_logger
 
 logger = get_task_logger(__name__) # this should call the logger celery_template.tasks
 # logger = logging.getLogger(__name__) # this should call the logger celery_template.tasks
 
 @app.task(bind=True)
-def sort_list(self, arr: list) -> dict:
+def sort_list(self, fpath: str) -> dict:
 
     """
-    Nested functions
+
+        task is packaged to perform bubble_sort 
 
     """
     def bubble_sort(arr: list) -> list:
@@ -19,10 +21,7 @@ def sort_list(self, arr: list) -> dict:
         """
             bubble sort implementation
                 - https://www.programiz.com/dsa/bubble-sort
-        """
-        
-        # decode arr to list
-        arr = json.loads(arr) 
+        """ 
 
         # loop to access each array element
         for i in range(len(arr)):
@@ -46,6 +45,7 @@ def sort_list(self, arr: list) -> dict:
     """
     start_time = time.time()
     
+    arr = read_csv(file_loc=fpath)
     res = bubble_sort(arr)
     
     end_time = time.time()
@@ -58,7 +58,7 @@ def sort_list(self, arr: list) -> dict:
     }
 
 @app.task(bind=True)
-def sort_lists(self, arrs: list) -> None:
+def sort_lists(self, dir: list) -> None:
 
     """
         Sort multiple list objects
@@ -67,7 +67,7 @@ def sort_lists(self, arrs: list) -> None:
     start_time = time.time()
     res = []
 
-    for i in enumerate(arrs):
+    for i in enumerate(dir):
         res.append(sort_list(i[1]))
 
     end_time = time.time()

@@ -1,11 +1,10 @@
 import argparse
 import logging
-import json
 import os
 
 from celery_template import app
 from celery_template.tasks import add, sort_list, sort_lists
-from celery_template.csv import read_csv
+from celery_template.csv import read_csv, write_csv
 from kombu.exceptions import OperationalError
 
 """
@@ -21,7 +20,31 @@ from kombu.exceptions import OperationalError
 logging.config.fileConfig('conf/logging.conf', disable_existing_loggers=False, defaults={'fileHandlerLog': f'logs/{__name__}.log'})
 LOGGER = logging.getLogger(__name__) # this will call the logger __main__ which will log to that referenced in python_template.__init__
 
-def single_task(fpath: str, fpaths: str):
+def generate_test_data(data_dir: str) -> None:
+
+        """
+            No reservation made to captures missing directories
+
+        """
+        import numpy as np
+
+        LOGGER.info('generating test data')
+        values = [0, np.random.randint(1000, size=int(5e3)).tolist()]
+        values_listed = [[i[0], np.random.randint(1000, size=int(5e3)).tolist()] for i in enumerate(range(10))]
+
+        write_csv(
+            file_loc=f'{data_dir}/sortlist_021923.csv', 
+            data=[values], 
+            schema=['record_id', 'data']
+        )
+        
+        write_csv(
+            file_loc=f'{data_dir}/sortlists_021923.csv', 
+            data=[values_listed], 
+            schema=['record_id', 'data']
+        )
+
+def single_task(fpath: str, fpaths: str) -> None:
 
     LOGGER.info('starting tasks')
 
@@ -52,7 +75,8 @@ if __name__ == "__main__":
     data_files = [f'{data_dir}/{f}' for f in os.listdir(data_dir)]
 
     # run tasks
-    single_task(data_files[1], data_files)
+    generate_test_data(data_dir=data_dir)
+    single_task(fpath=data_files[1], fpaths=data_files)
 
     
 

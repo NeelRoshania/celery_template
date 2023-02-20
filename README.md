@@ -81,7 +81,8 @@ References
         - `rabbitmqctl list_queues name messages messages_ready messages_unacknowledged`
     - [Logging](https://docs.celeryq.dev/en/latest/userguide/tasks.html#logging)
     - [Configuration and defaults](https://docs.celeryq.dev/en/stable/userguide/configuration.html)
-    - [Routing Tasks](https://docs.celeryq.dev/en/stable/userguide/configuration.html)		
+    - [Routing Tasks](https://docs.celeryq.dev/en/stable/userguide/configuration.html)
+    - [Flower Monitoring Tool](https://flower.readthedocs.io/en/latest/)
 
 2. PostgreSQL
     - [Client Applications](https://www.postgresql.org/docs/current/reference-client.html) 

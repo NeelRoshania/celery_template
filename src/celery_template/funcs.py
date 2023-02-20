@@ -14,8 +14,8 @@ def generate_test_data(data_dir: str) -> None:
 
         LOGGER.info('generating test data')
 
-        values_one = [[0, np.random.randint(1000, size=int(1e1)).tolist()]]
-        values_many = [[i[0], np.random.randint(1000, size=int(1e1)).tolist()] for i in enumerate(range(10))]
+        values_one = [[0, np.random.randint(1000, size=int(5e3)).tolist()]]
+        values_many = [[i[0], np.random.randint(1000, size=int(5e3)).tolist()] for i in enumerate(range(10))]
 
         write_csv(
             file_loc=f'{data_dir}/testdata_singlelist_021923.csv', 

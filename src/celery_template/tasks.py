@@ -5,8 +5,8 @@ from celery_template import app
 from celery_template.csv import read_csv
 from celery.utils.log import get_task_logger
 
-logger = get_task_logger(__name__) # this should call the logger celery_template.tasks
-# logger = logging.getLogger(__name__) # this should call the logger celery_template.tasks
+LOGGER = get_task_logger(__name__) # this should call the logger celery_template.tasks
+# LOGGER = logging.getLogger(__name__) # this should call the logger celery_template.tasks
 
 @app.task(bind=True)
 def sort_list(self, fpath: str) -> dict:
@@ -24,31 +24,39 @@ def sort_list(self, fpath: str) -> dict:
         """ 
 
         # loop to access each array element
-        for i in range(len(arr)):
+        if isinstance(arr, list):
 
-            # loop to compare array elements
-            for j in range(0, len(arr) - i - 1):
+            for i in range(len(arr)):
 
-                # compare two adjacent elements - change > to < to sort in descending order
-                if arr[j] > arr[j + 1]:
+                # loop to compare array elements
+                for j in range(0, len(arr) - i - 1):
 
-                    # swapping elements if elements are not in the intended order
-                    temp = arr[j]
-                    arr[j] = arr[j+1]
-                    arr[j+1] = temp
-        
-        return arr
-    
+                    # compare two adjacent elements - change > to < to sort in descending order
+                    if arr[j] > arr[j + 1]:
+
+                        # swapping elements if elements are not in the intended order
+                        temp = arr[j]
+                        arr[j] = arr[j+1]
+                        arr[j+1] = temp
+            
+            return arr
+        else:
+            raise TypeError(f'argument of type {type(arr)} must be {type([])}: {arr}')
     
     """
         Sort one list object 
     """
     start_time = time.time()
+    lsorted = []
+    headers, *data = read_csv(file_loc=fpath)
     
-    arr = read_csv(file_loc=fpath)
-    res = bubble_sort(
-        json.loads(arr[1][1])
-    )
+    for row in data:
+        l = json.loads(row[1])
+        lsorted.append([
+                        row[0],
+                        bubble_sort(l)
+                    ]
+        )
     
     end_time = time.time()
 
@@ -56,35 +64,41 @@ def sort_list(self, fpath: str) -> dict:
         "task_description": 'single-sort',
         "start_time": start_time,
         "end_time": end_time,
-        "res": res
+        "data": lsorted,
+        "success": True
     }
 
 @app.task(bind=True)
-def sort_lists(self, fpaths: list) -> None:
+def sort_directory(self, fpaths: list) -> None:
 
     """
-        Sort multiple list objects
+        Sort data across many files
+
     """
 
     start_time = time.time()
-    res = []
+    fsorted = []
 
-    for i in enumerate(fpaths):
-        res.append(
-            sort_list(i[1])
-            )
+    for path in enumerate(fpaths):
+        # LOGGER.info(f'sorting data in: {path[1]}')
+        fsorted.append([
+            path[1],
+            sort_list(fpath=path[1])["data"]
+            ]
+        )
 
     end_time = time.time()
 
     return {
-        "task_description": 'nested-sort',
+        "task_description": 'single-sort',
         "start_time": start_time,
         "end_time": end_time,
-        "res": res
+        "data": fsorted,
+        "success": True
     }
 
 @app.task(bind=True)
 def add(self, x, y):
     # logger.info(f'task_id:{self.request.id}, task_group:{self.request.group} - args=({x}, {y})') # can't get celery.utils.log.get_task_logger to work
-    logger.info(f'args=({x}, {y})') # can't get celery.utils.log.get_task_logger to work
+    LOGGER.info(f'args=({x}, {y})') # can't get celery.utils.log.get_task_logger to work
     return x + y

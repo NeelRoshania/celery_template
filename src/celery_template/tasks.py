@@ -41,12 +41,14 @@ def sort_list(self, fpath: str) -> dict:
     
     
     """
-        Sort one list object
+        Sort one list object 
     """
     start_time = time.time()
     
     arr = read_csv(file_loc=fpath)
-    res = bubble_sort(arr[1]) # argument 1 should be a list[int]
+    res = bubble_sort(
+        json.loads(arr[1][1])
+    )
     
     end_time = time.time()
 

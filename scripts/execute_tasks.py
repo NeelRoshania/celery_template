@@ -3,6 +3,7 @@ import logging
 import os
 
 from celery_template import app
+from celery_template.funcs import generate_test_data
 from celery_template.tasks import add, sort_list, sort_directory
 from celery_template.csv import read_csv, write_csv
 from kombu.exceptions import OperationalError

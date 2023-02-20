@@ -1,8 +1,8 @@
 import pytest
 import logging
-import os
 
-from celery_template.csv import read_csv, write_csv
+from celery_template.csv import write_csv
+from celery_template.funcs import generate_test_data
 from celery_template.tasks import sort_list, sort_directory
 
 # usage: 
@@ -10,33 +10,6 @@ from celery_template.tasks import sort_list, sort_directory
 #   - pytest -v
 
 LOGGER = logging.getLogger(__name__)
-
-def generate_test_data(data_dir: str) -> None:
-
-        """
-            No reservation made to captures missing directories
-
-        """
-        import numpy as np
-
-        LOGGER.info('generating test data')
-
-        values_one = [[0, np.random.randint(1000, size=int(1e1)).tolist()]]
-        values_many = [[i[0], np.random.randint(1000, size=int(1e1)).tolist()] for i in enumerate(range(10))]
-
-        write_csv(
-            file_loc=f'{data_dir}/testdata_singlelist_021923.csv', 
-            data=values_one, 
-            schema=['record_id', 'data']
-        )
-
-        write_csv(
-            file_loc=f'{data_dir}/testdata_many_021923.csv', 
-            data=values_many, 
-            schema=['record_id', 'data']
-        )
-
-        return [f'{data_dir}/{f}' for f in os.listdir('tests/data') if f.endswith('.csv')]
 
 def test_sort_row():
     

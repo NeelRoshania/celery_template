@@ -7,6 +7,15 @@ Features
 ### Use cases
 - TBD
 
+### Celery basics
+Let's say you have three tasks; `add`, `sort_list`, `sort_lists`
+- `add` takes completes < 0s
+- `sort_list` completes ~1.5s
+- `sort_directory` completes ~16s
+
+If you perform each sequentially, all tasks will complete in ~19s.
+If you interact with a distributed queuing system, all tasks will take the same time, but a response is returned in < 1s.
+
 ### Installation guide
 
 **Module setup**
@@ -17,15 +26,20 @@ Features
 5. Setup desired broker and backend 
 	- broker:`sudo apt-get install rabbitmq-server` then `sudo service rabbitmq-server restart`
 	- backend: See PostgreSQL backend database setup
-6. Starting a celery service
-    - `app`: `python3 -m app` as a seperate screen
-    - celery `flower`: `celery -A celery_template flower --port=5566 --loglevel=INFO` as start task monitoring instance
-7. Define [celery configurations](https://github.com/NeelRoshania/celery_template/blob/main/src/celery_template/__init__.py#L14)
 
 If you run into issues with `psycopg2`, consider the following;
 1. `sudo chmod 774 psycopg2_setup.sh`
 2. `./psycopg2_setup.sh`
 3. `pip3 install psycopg2`
+
+Starting a celery service
+- `app`: `python3 -m app` as a seperate screen
+- celery `flower`: `celery -A celery_template flower --port=5566 --loglevel=INFO` as start task monitoring instance as a seperate screen
+
+Submitting tasks
+- Define [celery configurations](https://github.com/NeelRoshania/celery_template/blob/main/src/celery_template/__init__.py#L14)
+- `python3 scripts/execute_tasks.py`
+- Navigate to monitoring system to observe queue activity
 
 **PostgreSQL backend database setup**
 1. Create role, database and assign privalages
@@ -39,7 +53,7 @@ If you run into issues with `psycopg2`, consider the following;
 3. Start worker, `celery -A celery_template worker --loglevel=INFO`
 4. Run tests
 	- Run a task: `res = add.apply_async(args=(5, 7), queue="celery_template_queue")`
-	- Check tasks on backend database - `celery_taskmeta`
+	- Using Flower, check tasks & backend database - `celery_taskmeta`
     		- If new task_id's are not generated, 
         		- check message queues
         	- ensure celery worker server is running
@@ -58,10 +72,11 @@ If you run into issues with `psycopg2`, consider the following;
 
 **Testing**
 1. `pytest -v`
+2. `pytest -v .\tests\scripts\some_test.py -k 'some_pattern'`
 
 **Environment & application setup**
 1. `pytest -v`
-2. `pytest tests/scripts/test_psqlconnect.py > tests/test_outcomes/010123` to dump results to file. Use `grep` to search through dump
+2. `pytest tests/scripts/test_psqlconnect.py > tests/test_outcomes/[current_date]` to dump results to file. Use `grep` to search through dump
 
 ### Repository setup
 1. Authenticate with github 

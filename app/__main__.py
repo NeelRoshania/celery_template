@@ -8,9 +8,10 @@ if __name__ == "__main__":
     
     parser = argparse.ArgumentParser()
     parser.add_argument("config", type=str, action="store", default="conf/config.yaml", nargs="?") # need to define this
-    parser.add_argument("--flower", "-f", const='', action="store_const")
+    parser.add_argument("--flower", "-f", const=True, action="store_const")
     args = parser.parse_args()
 
+    print(args)
     # run celery worker as a subprocess    
     if args.flower:
         LOGGER.info(f'starting celery worker node with flower - app:celery_template, queue: celery_template_queue, worker:worker')
@@ -30,7 +31,6 @@ if __name__ == "__main__":
                         )
     else:
         LOGGER.info(f'starting celery worker node - app:celery_template, queue: celery_template_queue, worker:worker')
-
         subprocess.Popen(
                             [
                                 "celery",

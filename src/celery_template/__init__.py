@@ -7,8 +7,8 @@ from kombu import Queue, Exchange
 
 # setup
 LOGGER = logging.getLogger(__name__)
-
 cparser = configparser.ConfigParser() # objects to make available when this package is imported
+cparser.read('conf/pipeline.conf')
 
 ## configuration: read from configparser - https://docs.celeryq.dev/en/stable/userguide/configuration.html
 class CeleryConfig:

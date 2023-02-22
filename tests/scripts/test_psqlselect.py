@@ -1,11 +1,13 @@
 import pytest
-from python_template import logger, cparser
-
-from python_template.psql import psql_connection
+import logging
+from celery_template import cparser
+from celery_template.psql import psql_connection
 
 # usage: 
 #   - pytest tests/scripts/test_sample.py
 #   - pytest -v tests/scripts/test_sample.py
+
+LOGGER = logging.getLogger(__name__) # this should call the logger celery_template.tasks
 
 def test_psqlselect():
 
@@ -13,7 +15,7 @@ def test_psqlselect():
     cparser.read('conf/pipeline.conf')
 
     # Test passes if connector is able to query and log the version
-    logger.info(f'starting connection to psql')
+    LOGGER.info(f'starting connection to psql')
     
     # establishing the connection
     conn_response = psql_connection(
@@ -31,16 +33,16 @@ def test_psqlselect():
         cursor = conn.cursor()
 
         # Executing an MYSQL function using the execute() method
-        cursor.execute("select * from weather;")
+        cursor.execute("select * from celery_taskmeta limit 1;")
 
         # Fetch a single row using fetchone() method.
         data = cursor.fetchall()
-        logger.info(f'data: {data}, type: {type(data)}, len: {len(data)}')
+        LOGGER.info(f'data: {data}, type: {type(data)}, len: {len(data)}')
 
         # Closing the connection
         conn.close()
     else:
-        logger.info(f'connection failed: {conn_response}')
+        LOGGER.info(f'connection failed: {conn_response}')
         raise Exception(f'Failed to pass test - {conn_response}')
 
 if __name__ == "__main__":

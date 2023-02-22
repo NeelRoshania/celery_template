@@ -1,8 +1,9 @@
 import time
 import json
 
-from celery_template import app
+from celery_template import app, cparser
 from celery_template.csv import read_csv
+from celery_template.psql import psql_connection
 from celery.utils.log import get_task_logger
 from celery.result import AsyncResult
 
@@ -13,6 +14,39 @@ LOGGER = get_task_logger(__name__) # this should call the logger celery_template
 def fetch_task_result(self, taskid: str) -> tuple:
     LOGGER.info(f'querying task: {taskid}') # can't get celery.utils.log.get_task_logger to work
     return AsyncResult(id=taskid, app=app)
+
+@app.task(bind=True)
+def fetch_backend_taskresult(self, taskid: str) -> tuple:
+    LOGGER.info(f'querying task: {taskid}') # can't get celery.utils.log.get_task_logger to work
+
+    # connect to psql
+    conn_response = psql_connection(
+        db=cparser.get('postgresql_credentials', 'database'),
+        usr=cparser.get('postgresql_credentials', 'user'),        
+        pswd=cparser.get('postgresql_credentials', 'password'), 
+        hst=cparser.get('postgresql_credentials', 'host'), 
+        prt=cparser.get('postgresql_credentials', 'port')
+        )
+    
+    if conn_response["connection-status"]:
+
+        # Creating a cursor object using the cursor() method
+        conn = conn_response['conn']
+        cursor = conn.cursor()
+
+        # Executing an MYSQL function using the execute() method
+        cursor.execute("select * from celert_taskmeta limit 10;")
+
+        # Fetch a single row using fetchone() method.
+        data = cursor.fetchall()
+        LOGGER.info(f'data: {data}, type: {type(data)}, len: {len(data)}')
+
+        # Closing the connection
+        conn.close()
+        return data
+    else:
+        LOGGER.info(f'connection failed: {conn_response}')
+        raise Exception(f'Failed to pass test - {conn_response}')
 
 @app.task(bind=True)
 def sort_list(self, fpath: str) -> dict:

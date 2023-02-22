@@ -1,11 +1,14 @@
 import pytest
-from python_template import logger, cparser
+import logging
 
-from python_template.psql import psql_connection
+from celery_template import cparser
+from celery_template.psql import psql_connection
 
 # usage: 
 #   - pytest tests/scripts/test_sample.py
 #   - pytest -v tests/scripts/test_sample.py
+
+LOGGER = logging.getLogger(__name__) # this should call the logger celery_template.tasks
 
 def test_psqlconnection():
 
@@ -13,7 +16,7 @@ def test_psqlconnection():
     cparser.read('conf/pipeline.conf')
 
     # Test passes if connector is able to query and log the version
-    logger.info(f'starting connection to psql')
+    LOGGER.info(f'starting connection to psql')
     
     # establishing the connection
     conn_response = psql_connection(
@@ -35,12 +38,12 @@ def test_psqlconnection():
 
         # Fetch a single row using fetchone() method.
         data = cursor.fetchone()
-        logger.info(f'Connection established to: {data}')
+        LOGGER.info(f'Connection established to: {data}')
 
         # Closing the connection
         conn.close()
     else:
-        logger.info(f'connection failed: {conn_response}')
+        LOGGER.info(f'connection failed: {conn_response}')
         raise Exception(f'Failed to pass test - {conn_response}')
 
 if __name__ == "__main__":

@@ -1,7 +1,8 @@
 import psycopg2
-
-from celery_template import logger
+import logging
 from psycopg2 import OperationalError
+
+LOGGER = logging.getLogger(__name__) # this calls the celery_template.funcs logger - which logs to worker node instance
 
 def psql_connection(
     db: str,
@@ -10,7 +11,7 @@ def psql_connection(
     hst: str,
     prt: str
 ) -> any:
-    logger.info(f'connecting to psql {hst}:{prt}:{db}') # need to log this
+    LOGGER.info(f'connecting to psql {hst}:{prt}:{db}') # need to log this
 
     try:
         return {

@@ -11,7 +11,6 @@ if __name__ == "__main__":
     parser.add_argument("--flower", "-f", const=True, action="store_const")
     args = parser.parse_args()
 
-    print(args)
     # run celery worker as a subprocess
     LOGGER.info(f'starting celery worker node - app:celery_template, queue: celery_template_queue, worker:worker')
     subprocess.Popen(

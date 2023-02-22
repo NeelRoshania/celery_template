@@ -84,7 +84,8 @@ References
     - [Logging](https://docs.celeryq.dev/en/latest/userguide/tasks.html#logging)
     - [Configuration and defaults](https://docs.celeryq.dev/en/stable/userguide/configuration.html)
     - [Routing Tasks](https://docs.celeryq.dev/en/stable/userguide/configuration.html)
-    - [Flower Monitoring Tool](https://flower.readthedocs.io/en/latest/)
+    - [Flower Task Monitoring Tool](https://flower.readthedocs.io/en/latest/)
+        - [Installation](https://flower.readthedocs.io/en/latest/install.html)
 
 2. PostgreSQL
     - [Client Applications](https://www.postgresql.org/docs/current/reference-client.html) 

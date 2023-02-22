@@ -30,7 +30,7 @@ def fetch_backend_taskresult(self, taskid: str) -> tuple:
         cursor = conn.cursor()
 
         # Executing an MYSQL function using the execute() method
-        cursor.execute(f'select result from celert_taskmeta where task_id = \'{taskid}\' limit 10;')
+        cursor.execute(f'select result from celery_taskmeta where task_id = \'{taskid}\' limit 10;')
 
         # Fetch a single row using fetchone() method.
         data = cursor.fetchall()

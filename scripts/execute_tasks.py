@@ -52,7 +52,7 @@ if __name__ == "__main__":
     LOGGER.info(f'test data: {data_files}')
 
     # run tasks
-    sequential_tasks(fpath=data_files[1], fpaths=data_files)
+    sequential_tasks(fpath=data_files[0], fpaths=data_files)
 
     
 

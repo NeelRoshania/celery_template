@@ -4,9 +4,15 @@ import json
 from celery_template import app
 from celery_template.csv import read_csv
 from celery.utils.log import get_task_logger
+from celery.result import AsyncResult
 
 LOGGER = get_task_logger(__name__) # this should call the logger celery_template.tasks
 # LOGGER = logging.getLogger(__name__) # this should call the logger celery_template.tasks
+
+@app.task(bind=True)
+def fetch_task_result(self, taskid: str) -> tuple:
+    LOGGER.info(f'querying task: {taskid}') # can't get celery.utils.log.get_task_logger to work
+    return AsyncResult(id=taskid, app=app)
 
 @app.task(bind=True)
 def sort_list(self, fpath: str) -> dict:

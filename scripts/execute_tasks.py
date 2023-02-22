@@ -33,6 +33,7 @@ def sequential_tasks(fpath: str, fpaths: str) -> None:
         t2 = sort_list.apply_async(args=[fpath], queue='celery_template_queue')
         t3 = sort_directory.apply_async(args=[fpaths], queue='celery_template_queue')
 
+        # [develop] save results once complete
         LOGGER.info(f'tasks submitted')
 
     except OperationalError as e: 

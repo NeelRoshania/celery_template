@@ -10,13 +10,13 @@ from celery_template.tasks import sort_list, sort_directory
 #   - pytest -v
 
 LOGGER = logging.getLogger(__name__)
+test_dir = 'tests/data'
+
 
 def test_sort_row():
-    
-    test_dir = 'tests/data'
     tdata_files = generate_test_data(test_dir)
 
-    res = sort_list(f'{test_dir}/testdata_singlelist_021923.csv')
+    res = sort_list(fpath=f'{test_dir}/testdata_singlelist_021923.csv')
 
     LOGGER.info(f'test complete - {res}') # doesn't work yet
     write_csv(file_loc=f'{test_dir}/results/test_sort_row.csv', data=res["data"])
@@ -25,10 +25,9 @@ def test_sort_row():
 
 def test_sort_manyrows():
     
-    test_dir = 'tests/data'
     tdata_files = generate_test_data(test_dir)
 
-    res = sort_list(f'{test_dir}/testdata_many_021923.csv')
+    res = sort_list(fpath=f'{test_dir}/testdata_many_021923.csv')
 
     LOGGER.info(f'test complete - {res}') # doesn't work yet
     write_csv(file_loc=f'{test_dir}/results/test_sort_manyrows.csv', data=res["data"])
@@ -37,10 +36,9 @@ def test_sort_manyrows():
 
 def test_sort_directory():
     
-    test_dir = 'tests/data'
     tdata_files = generate_test_data(test_dir)
 
-    res = sort_directory(tdata_files)
+    res = sort_directory(fpaths=tdata_files)
 
     LOGGER.info(f'test complete - {res}') # doesn't work yet
     write_csv(file_loc=f'{test_dir}/results/test_sort_directory.csv', data=res["data"])

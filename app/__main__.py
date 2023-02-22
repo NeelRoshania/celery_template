@@ -12,34 +12,17 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     print(args)
-    # run celery worker as a subprocess    
-    if args.flower:
-        LOGGER.info(f'starting celery worker node with flower - app:celery_template, queue: celery_template_queue, worker:worker')
-        subprocess.Popen(
-                            [
-                                "celery",
-                                "-A",
-                                "celery_template",
-                                "worker",
-                                "-Q",
-                                "celery_template_queue",
-                                "--loglevel=INFO",
-                                "flower",
-                                "--port=5566"
-                                # "--logfile=logs/celery.log"
-                            ]
-                        )
-    else:
-        LOGGER.info(f'starting celery worker node - app:celery_template, queue: celery_template_queue, worker:worker')
-        subprocess.Popen(
-                            [
-                                "celery",
-                                "-A",
-                                "celery_template",
-                                "worker",
-                                "-Q",
-                                "celery_template_queue",
-                                "--loglevel=INFO",
-                                # "--logfile=logs/celery.log"
-                            ]
-                        )
+    # run celery worker as a subprocess
+    LOGGER.info(f'starting celery worker node - app:celery_template, queue: celery_template_queue, worker:worker')
+    subprocess.Popen(
+                        [
+                            "celery",
+                            "-A",
+                            "celery_template",
+                            "worker",
+                            "-Q",
+                            "celery_template_queue",
+                            "--loglevel=INFO",
+                            # "--logfile=logs/celery.log"
+                        ]
+                    )

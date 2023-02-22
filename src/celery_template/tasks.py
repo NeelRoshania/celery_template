@@ -3,6 +3,7 @@ import json
 
 from celery_template import app, cparser
 from celery_template.csv import read_csv
+from celery_template.funcs import connect_postgres
 from celery_template.psql import psql_connection
 from celery.utils.log import get_task_logger
 from celery.result import AsyncResult
@@ -20,13 +21,7 @@ def fetch_backend_taskresult(self, taskid: str) -> tuple:
     LOGGER.info(f'querying task: {taskid}') # can't get celery.utils.log.get_task_logger to work
 
     # connect to psql
-    conn_response = psql_connection(
-        db=cparser.get('postgresql_credentials', 'database'),
-        usr=cparser.get('postgresql_credentials', 'user'),        
-        pswd=cparser.get('postgresql_credentials', 'password'), 
-        hst=cparser.get('postgresql_credentials', 'host'), 
-        prt=cparser.get('postgresql_credentials', 'port')
-        )
+    conn_response = connect_postgres()
     
     if conn_response["connection-status"]:
 
@@ -35,7 +30,7 @@ def fetch_backend_taskresult(self, taskid: str) -> tuple:
         cursor = conn.cursor()
 
         # Executing an MYSQL function using the execute() method
-        cursor.execute("select * from celert_taskmeta limit 10;")
+        cursor.execute(f'select result from celert_taskmeta where task_id = \'{taskid}\' limit 10;')
 
         # Fetch a single row using fetchone() method.
         data = cursor.fetchall()

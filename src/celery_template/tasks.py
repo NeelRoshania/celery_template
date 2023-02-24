@@ -18,6 +18,12 @@ def fetch_task_result(self, taskid: str) -> tuple:
 
 @app.task(bind=True)
 def fetch_backend_taskresult(self, taskid: str) -> tuple:
+
+    """
+        Fetch task_id result
+            - result needs to be deserialized
+                result = pickle.loads(fetch_backend_taskresult({task_id})[0][0])
+    """
     LOGGER.info(f'querying task: {taskid}') # can't get celery.utils.log.get_task_logger to work
 
     # connect to psql

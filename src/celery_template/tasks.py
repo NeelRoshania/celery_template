@@ -15,7 +15,7 @@ LOGGER = get_task_logger(__name__) # this should call the logger celery_template
 # signal that triggers when a task is completed - https://docs.celeryq.dev/en/stable/userguide/signals.html#signal-ref
 @task_success.connect
 def log_task_id(sender=None, result=None, **kwargs) -> tuple:
-    LOGGER.info(f'task_id:{sender.request.id} - task completed') # can't get celery.utils.log.get_task_logger to work
+    LOGGER.info(f'task_id:{sender.request.id} - task completed with result: {result}') # can't get celery.utils.log.get_task_logger to work
     return None
 
 @app.task(bind=True)

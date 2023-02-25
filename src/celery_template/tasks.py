@@ -12,11 +12,19 @@ from celery.signals import task_success
 LOGGER = get_task_logger(__name__) # this should call the logger celery_template.tasks
 # LOGGER = logging.getLogger(__name__) # this should call the logger celery_template.tasks
 
-# signal that triggers when a task is completed - https://docs.celeryq.dev/en/stable/userguide/signals.html#signal-ref
+
+# signals
+
+# https://docs.celeryq.dev/en/stable/userguide/signals.html#signal-ref
 @task_success.connect
 def log_task_id(sender=None, result=None, **kwargs) -> tuple:
     LOGGER.info(f'task_id:{sender.request.id} - task completed with result: {result}') # can't get celery.utils.log.get_task_logger to work
+    print(dir(LOGGER.handlers))
     return None
+
+
+
+# tasks
 
 @app.task(bind=True)
 def fetch_task_result(self, taskid: str) -> tuple:

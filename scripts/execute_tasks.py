@@ -18,7 +18,15 @@ from kombu.exceptions import OperationalError
 
 """
 
-logging.config.fileConfig('conf/logging.conf', disable_existing_loggers=False, defaults={'fileHandlerLog': f'logs/{__name__}.log'})
+# logging configurations
+logging.config.fileConfig(
+    'conf/logging.conf', 
+    defaults={
+        'fileHandlerLog': f'logs/{__name__}.log'
+        # 'taskFileHandlerLog': f'logs/{__name__}.log'
+        }
+)
+
 LOGGER = logging.getLogger(__name__) # this will call the logger __main__ which will log to that referenced in python_template.__init__
 
 def sequential_tasks(fpath: str, fpaths: str) -> None:
@@ -30,8 +38,8 @@ def sequential_tasks(fpath: str, fpaths: str) -> None:
 
         # celery tasks expect serialized arguments, not objects - https://docs.celeryq.dev/en/stable/userguide/calling.html#serializers
         t1 = add.apply_async(args=[5, 7], queue='celery_template_queue')
-        t2 = sort_list.apply_async(args=[fpath], queue='celery_template_queue')
-        t3 = sort_directory.apply_async(args=[fpaths], queue='celery_template_queue')
+        # t2 = sort_list.apply_async(args=[fpath], queue='celery_template_queue')
+        # t3 = sort_directory.apply_async(args=[fpaths], queue='celery_template_queue')
 
         # [develop] save results once complete
         LOGGER.info(f'tasks submitted')

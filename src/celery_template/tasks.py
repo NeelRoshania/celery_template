@@ -1,5 +1,6 @@
 import time
 import json
+import logging
 
 from celery_template import app, cparser
 from celery_template.csv import read_csv
@@ -7,21 +8,29 @@ from celery_template.funcs import connect_postgres
 from celery_template.psql import psql_connection
 from celery.utils.log import get_task_logger
 from celery.result import AsyncResult
-from celery.signals import task_success
+from celery.signals import task_success, celeryd_init
 
-LOGGER = get_task_logger(__name__) # this should call the logger celery_template.tasks
-# LOGGER = logging.getLogger(__name__) # this should call the logger celery_template.tasks
+# LOGGER = get_task_logger(__name__) # this should call the logger celery_template.tasks
+LOGGER = logging.getLogger(__name__) # this should call the logger celery_template.tasks
+
+# # this is a work around but doesn't solve the issue - LOGGER.handlers returns null
+# if LOGGER.hasHandlers():
+#         if True in [isinstance(handler, logging.NullHandler) for handler in LOGGER.handlers]:
+#             LOGGER.addHandler(logging.FileHandler('logs/tasks.log'))
 
 
-# signals
 
-# https://docs.celeryq.dev/en/stable/userguide/signals.html#signal-ref
+# signals - https://docs.celeryq.dev/en/stable/userguide/signals.html#signal-ref
+
+# @celeryd_init.connect
+# def configure_workers(sender=None, conf=None, **kwargs):
+#     return None
+
 @task_success.connect
 def log_task_id(sender=None, result=None, **kwargs) -> tuple:
+    print(f'{LOGGER.name}, handlers: {LOGGER.handlers}')
     LOGGER.info(f'task_id:{sender.request.id} - task completed with result: {result}') # can't get celery.utils.log.get_task_logger to work
-    print(dir(LOGGER.handlers))
     return None
-
 
 
 # tasks
@@ -120,7 +129,7 @@ def sort_list(self, fpath: str) -> dict:
         "task_description": 'single-sort',
         "start_time": start_time,
         "end_time": end_time,
-        "data": lsorted,
+        # "data": lsorted,
         "success": True
     }
 
@@ -149,7 +158,7 @@ def sort_directory(self, fpaths: list) -> None:
         "task_description": 'single-sort',
         "start_time": start_time,
         "end_time": end_time,
-        "data": fsorted,
+        # "data": fsorted,
         "success": True
     }
 

@@ -15,7 +15,7 @@ from celery.signals import task_success, celeryd_init
 logging.config.fileConfig(
     'conf/logging.conf', 
     defaults={
-        'taskFileHandlerLog': f'logs/{__name__}.log'
+        'taskHandlerLog': f'logs/{__name__}.log'
         }
 )
 

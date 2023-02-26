@@ -1,7 +1,6 @@
 import argparse
 import subprocess
 import logging
-import logging.config
 
 if __name__ == "__main__":
     
@@ -9,14 +8,6 @@ if __name__ == "__main__":
     parser.add_argument("config", type=str, action="store", default="conf/config.yaml", nargs="?") # need to define this
     parser.add_argument("--flower", "-f", const=True, action="store_const")
     args = parser.parse_args()
-
-    # logging config
-    logging.config.fileConfig(
-        'conf/logging.conf', 
-        defaults={
-            'fileHandlerLog': f'logs/{__name__}.log'
-            }
-    )
 
     LOGGER = logging.getLogger(__name__) # this logger is defined seperately, see logging.conf
 

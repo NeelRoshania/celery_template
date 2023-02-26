@@ -3,8 +3,6 @@ import subprocess
 import logging
 import logging.config
 
-LOGGER = logging.getLogger(__name__) # this logger is defined seperately, see logging.conf
-
 if __name__ == "__main__":
     
     parser = argparse.ArgumentParser()
@@ -20,6 +18,8 @@ if __name__ == "__main__":
             'taskFileHandlerLog': f'logs/{__name__}.tasks.log'
             }
     )
+
+    LOGGER = logging.getLogger(__name__) # this logger is defined seperately, see logging.conf
 
     # run celery worker as a subprocess
     LOGGER.info(f'starting celery worker node - app:celery_template, queue: celery_template_queue, worker:worker')

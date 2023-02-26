@@ -12,13 +12,19 @@ from celery.app.log import TaskFormatter
 from celery.result import AsyncResult
 from celery.signals import task_success, after_setup_task_logger
 
-# logging configurations
 
+"""
+    References
+        - task requests, https://docs.celeryq.dev/en/stable/userguide/tasks.html#task-request
+        - signals,  https://docs.celeryq.dev/en/stable/userguide/signals.html#signal-ref
+
+"""
+# logging configurations
 LOGGER = get_task_logger(__name__) # this should call the logger celery_template.tasks
 # LOGGER = logging.getLogger(__name__) # this should call the logger celery_template.tasks
 
 
-# signals - https://docs.celeryq.dev/en/stable/userguide/signals.html#signal-ref
+# signals
 
 # define task logger and redirect to file
 @after_setup_task_logger.connect
@@ -30,6 +36,7 @@ def setup_task_logger(logger, *args, **kwargs):
         handler.setFormatter(TaskFormatter('%(asctime)s - %(task_id)s - %(task_name)s - %(name)s - %(levelname)s - %(message)s'))
     return None
 
+# signal to handle task successes
 @task_success.connect
 def log_task_id(sender=None, result=None, **kwargs) -> tuple:
     print(f'{LOGGER.name}, handlers: {LOGGER.handlers}')
@@ -167,5 +174,5 @@ def sort_directory(self, fpaths: list) -> None:
 
 @app.task(bind=True)
 def add(self, x, y):
-    LOGGER.info(f'task request made, task.request:{dir(self.request)} - args=({x}, {y})')
+    LOGGER.info(f'task.request:{dir(self.request)} - args=({x}, {y})')
     return x + y

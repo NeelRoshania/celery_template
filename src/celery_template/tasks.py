@@ -128,9 +128,10 @@ def sort_list(self, fpath: str) -> dict:
                     ]
         )
 
+    # exposing data to an object in memory is not recommended
     return {
         "task_description": 'single-sort',
-        # "data": lsorted,
+        "data": lsorted,
     }
 
 @app.task(bind=True)
@@ -138,6 +139,9 @@ def sort_directory(self, fpaths: list) -> None:
 
     """
         Sort data across many files
+            - arguably redudent, 
+                - but required to showcase that tasks should call references to the most recent verison of data objects
+                - in this case, a path to a file on disk
 
     """
 

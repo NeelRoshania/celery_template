@@ -25,6 +25,10 @@ from celery.signals import task_success, after_setup_task_logger
             - https://docs.python.org/3/library/stdtypes.html#memoryview
             - https://docs.python.org/3/c-api/buffer.html#bufferobjects
 
+            - defining memoryviews from arrays
+                - https://docs.python.org/3/library/stdtypes.html#memoryview.tolist
+                - https://docs.python.org/3/library/array.html
+
 """
 # logging configurations
 LOGGER = get_task_logger(__name__) # this should call the logger celery_template.tasks
@@ -143,7 +147,7 @@ def sort_list(self, fpath: str) -> dict:
     return {
         "task_description": 'single-sort',
         "completed": True,
-        "data": memoryview(lsorted),
+        "data": memoryview(array.array('l', lsorted)),
     }
 
 @app.task(bind=True)
@@ -169,7 +173,7 @@ def sort_directory(self, fpaths: list) -> None:
     return {
         "task_description": 'sort-directory',
         "completed": True,
-        "data": memoryview(fsorted),
+        "data": memoryview(array.array('l', fsorted)),
     }
 
 @app.task(bind=True)

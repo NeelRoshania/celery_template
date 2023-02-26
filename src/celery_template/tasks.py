@@ -1,5 +1,6 @@
 import json
 import logging
+import array
 
 from celery_template import app, cparser
 from celery_template.csv import read_csv

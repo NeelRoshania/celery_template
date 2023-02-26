@@ -10,6 +10,14 @@ from celery.utils.log import get_task_logger
 from celery.result import AsyncResult
 from celery.signals import task_success, celeryd_init
 
+# logging configurations
+logging.config.fileConfig(
+    'conf/logging.conf', 
+    defaults={
+        'taskFileHandlerLog': f'logs/{__name__}.log'
+        }
+)
+
 # LOGGER = get_task_logger(__name__) # this should call the logger celery_template.tasks
 LOGGER = logging.getLogger(__name__) # this should call the logger celery_template.tasks
 
@@ -21,17 +29,6 @@ LOGGER = logging.getLogger(__name__) # this should call the logger celery_templa
 
 
 # signals - https://docs.celeryq.dev/en/stable/userguide/signals.html#signal-ref
-
-@celeryd_init.connect
-def configure_logging(sender=None, conf=None, **kwargs):
-    # logging configurations
-    logging.config.fileConfig(
-        'conf/logging.conf', 
-        defaults={
-            'taskFileHandlerLog': f'logs/{__name__}.log'
-            }
-    )
-    return None
 
 @task_success.connect
 def log_task_id(sender=None, result=None, **kwargs) -> tuple:

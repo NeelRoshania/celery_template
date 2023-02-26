@@ -14,6 +14,17 @@ from celery.signals import task_success, after_setup_task_logger
         - task requests, https://docs.celeryq.dev/en/stable/userguide/tasks.html#task-request
         - signals,  https://docs.celeryq.dev/en/stable/userguide/signals.html#signal-ref
 
+        - memoryview's (to deserialize data objects, and provide a method of exposing underlying data without copying)
+            Certain objects available in Python wrap access to an underlying memory array or buffer. 
+            Such objects include the built-in bytes and bytearray, and some extension types like array.array. 
+            Third-party libraries may define their own types for special purposes, such as image processing or numeric analysis.
+
+            While each of these types have their own semantics, they share the common characteristic of being backed by a possibly large memory buffer. 
+            It is then desirable, in some situations, to access that buffer directly and without intermediate copying.
+
+            - https://docs.python.org/3/library/stdtypes.html#memoryview
+            - https://docs.python.org/3/c-api/buffer.html#bufferobjects
+
 """
 # logging configurations
 LOGGER = get_task_logger(__name__) # this should call the logger celery_template.tasks
@@ -27,21 +38,21 @@ def setup_task_logger(logger, *args, **kwargs):
     LOGGER.handlers.clear()
     LOGGER.addHandler(logging.FileHandler(f'logs/{__name__}.log'))
     for handler in LOGGER.handlers:
-        handler.setFormatter(TaskFormatter('[%(asctime)s:%(task_id)s:%(task_name)s:%(name)s:%(levelname)s:%(message)s]'))
+        handler.setFormatter(TaskFormatter('[%(asctime)s:%(task_id)s:%(task_name)s:%(name)s:%(levelname)s] %(message)s'))
     return None
 
 # signal to handle task successes
 @task_success.connect
 def log_task_id(sender=None, result=None, **kwargs) -> tuple:
     print(f'{LOGGER.name}, handlers: {LOGGER.handlers}')
-    LOGGER.info(f'task_id:{sender.request.id} - task completed with result: {result}') # can't get celery.utils.log.get_task_logger to work
+    LOGGER.info(f'task_request_id:{sender.request.id} completed with result: {result}')
     return None
 
 # tasks
 
 @app.task(bind=True)
 def fetch_task_result(self, taskid: str) -> tuple:
-    LOGGER.info(f'querying task: {taskid}') # can't get celery.utils.log.get_task_logger to work
+    LOGGER.info(f'querying task: {taskid}')
     return AsyncResult(id=taskid, app=app)
 
 @app.task(bind=True)
@@ -52,7 +63,7 @@ def fetch_backend_taskresult(self, taskid: str) -> tuple:
             - result needs to be deserialized
                 result = pickle.loads(fetch_backend_taskresult({task_id})[0][0])
     """
-    LOGGER.info(f'querying task: {taskid}') # can't get celery.utils.log.get_task_logger to work
+    LOGGER.info(f'querying task: {taskid}')
 
     # connect to psql
     conn_response = connect_postgres()
@@ -131,7 +142,8 @@ def sort_list(self, fpath: str) -> dict:
     # exposing data to an object in memory is not recommended
     return {
         "task_description": 'single-sort',
-        "data": lsorted,
+        "completed": True,
+        "data": memoryview(lsorted),
     }
 
 @app.task(bind=True)
@@ -155,8 +167,9 @@ def sort_directory(self, fpaths: list) -> None:
         )
 
     return {
-        "task_description": 'single-sort',
-        # "data": fsorted,
+        "task_description": 'sort-directory',
+        "completed": True,
+        "data": memoryview(fsorted),
     }
 
 @app.task(bind=True)

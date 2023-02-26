@@ -12,12 +12,7 @@ from celery.result import AsyncResult
 from celery.signals import task_success, celeryd_init
 
 # logging configurations
-logging.config.fileConfig(
-    'conf/logging.conf', 
-    defaults={
-        'taskHandlerLog': f'logs/{__name__}.log'
-        }
-)
+# logging.config.fileConfig('conf/logging.conf', defaults={'taskHandlerLog': f'logs/{__name__}.log'})
 
 # LOGGER = get_task_logger(__name__) # this should call the logger celery_template.tasks
 LOGGER = logging.getLogger(__name__) # this should call the logger celery_template.tasks

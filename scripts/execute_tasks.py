@@ -22,7 +22,8 @@ from kombu.exceptions import OperationalError
 logging.config.fileConfig(
     'conf/logging.conf', 
     defaults={
-        'fileHandlerLog': f'logs/{__name__}.log'
+        'fileHandlerLog': f'logs/{__name__}.log', 
+        'taskHandlerLog': f'logs/{__name__}.tasks.log'
         }
 )
 

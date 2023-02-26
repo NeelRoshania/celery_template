@@ -27,7 +27,7 @@ def setup_task_logger(logger, *args, **kwargs):
     LOGGER.handlers.clear()
     LOGGER.addHandler(logging.FileHandler(f'logs/{__name__}.log'))
     for handler in LOGGER.handlers:
-        handler.setFormatter(TaskFormatter('%(asctime)s - %(task_id)s - %(task_name)s - %(name)s - %(levelname)s - %(message)s'))
+        handler.setFormatter(TaskFormatter('[%(asctime)s:%(task_id)s:%(task_name)s:%(name)s:%(levelname)s:%(message)s]'))
     return None
 
 # signal to handle task successes

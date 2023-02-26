@@ -2,6 +2,8 @@ import psycopg2
 import logging
 from psycopg2 import OperationalError
 
+from celery_template import cparser
+
 LOGGER = logging.getLogger(__name__) # this calls the celery_template.funcs logger - which logs to worker node instance
 
 def psql_connection(
@@ -30,3 +32,14 @@ def psql_connection(
             "conn": None,
             "reason": oe
         }
+
+def connect_postgres() -> dict:
+
+    # establish connection without exposing configuration on high level
+    return psql_connection(
+                    db=cparser.get('postgresql_credentials', 'database'),
+                    usr=cparser.get('postgresql_credentials', 'user'),        
+                    pswd=cparser.get('postgresql_credentials', 'password'), 
+                    hst=cparser.get('postgresql_credentials', 'host'), 
+                    prt=cparser.get('postgresql_credentials', 'port')
+        )

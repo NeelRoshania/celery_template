@@ -1,6 +1,5 @@
 import configparser
 import logging
-import logging.config
 
 from celery import Celery
 from kombu import Queue, Exchange

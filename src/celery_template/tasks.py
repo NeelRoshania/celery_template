@@ -1,17 +1,13 @@
-import time
 import json
 import logging
-import logging.config
 
 from celery_template import app, cparser
 from celery_template.csv import read_csv
-from celery_template.funcs import connect_postgres
-from celery_template.psql import psql_connection
-from celery.utils.log import get_task_logger
+from celery_template.psql import connect_postgres
 from celery.app.log import TaskFormatter
+from celery.utils.log import get_task_logger
 from celery.result import AsyncResult
 from celery.signals import task_success, after_setup_task_logger
-
 
 """
     References
@@ -21,8 +17,6 @@ from celery.signals import task_success, after_setup_task_logger
 """
 # logging configurations
 LOGGER = get_task_logger(__name__) # this should call the logger celery_template.tasks
-# LOGGER = logging.getLogger(__name__) # this should call the logger celery_template.tasks
-
 
 # signals
 
@@ -121,10 +115,11 @@ def sort_list(self, fpath: str) -> dict:
     """
         Sort one list object 
     """
-    start_time = time.time()
+
     lsorted = []
     headers, *data = read_csv(file_loc=fpath)
-    
+    LOGGER.info(f'sorting data in: {fpath}')
+
     for row in data:
         l = json.loads(row[1])
         lsorted.append([
@@ -132,15 +127,10 @@ def sort_list(self, fpath: str) -> dict:
                         bubble_sort(l)
                     ]
         )
-    
-    end_time = time.time()
 
     return {
         "task_description": 'single-sort',
-        "start_time": start_time,
-        "end_time": end_time,
         # "data": lsorted,
-        "success": True
     }
 
 @app.task(bind=True)
@@ -151,25 +141,18 @@ def sort_directory(self, fpaths: list) -> None:
 
     """
 
-    start_time = time.time()
     fsorted = []
 
     for path in enumerate(fpaths):
-        # LOGGER.info(f'sorting data in: {path[1]}')
         fsorted.append([
             path[1],
             sort_list(fpath=path[1])["data"]
             ]
         )
 
-    end_time = time.time()
-
     return {
         "task_description": 'single-sort',
-        "start_time": start_time,
-        "end_time": end_time,
         # "data": fsorted,
-        "success": True
     }
 
 @app.task(bind=True)

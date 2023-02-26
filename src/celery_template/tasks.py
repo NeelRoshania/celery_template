@@ -8,31 +8,33 @@ from celery_template.csv import read_csv
 from celery_template.funcs import connect_postgres
 from celery_template.psql import psql_connection
 from celery.utils.log import get_task_logger
+from celery.app.log import TaskFormatter
 from celery.result import AsyncResult
-from celery.signals import task_success, celeryd_init
+from celery.signals import task_success, after_setup_task_logger
 
 # logging configurations
-# logging.config.fileConfig('conf/logging.conf', defaults={'fileHandlerLog': f'logs/{__name__}.log', 'taskHandlerLog': f'logs/{__name__}.tasks.log'})
 
 LOGGER = get_task_logger(__name__) # this should call the logger celery_template.tasks
 # LOGGER = logging.getLogger(__name__) # this should call the logger celery_template.tasks
 
-# # this is a work around but doesn't solve the issue - LOGGER.handlers returns null
-# if LOGGER.hasHandlers():
-#         if True in [isinstance(handler, logging.NullHandler) for handler in LOGGER.handlers]:
-#             LOGGER.addHandler(logging.FileHandler('logs/tasks.log'))
-
-
 
 # signals - https://docs.celeryq.dev/en/stable/userguide/signals.html#signal-ref
+
+# define task logger and redirect to file
+@after_setup_task_logger.connect
+def setup_task_logger(logger, *args, **kwargs):
+    LOGGER = logging.getLogger(__name__)
+    LOGGER.handlers.clear()
+    LOGGER.addHandler(logging.FileHandler(f'logs/{__name__}.log'))
+    for handler in LOGGER.handlers:
+        handler.setFormatter(TaskFormatter('%(asctime)s - %(task_id)s - %(task_name)s - %(name)s - %(levelname)s - %(message)s'))
+    return None
 
 @task_success.connect
 def log_task_id(sender=None, result=None, **kwargs) -> tuple:
     print(f'{LOGGER.name}, handlers: {LOGGER.handlers}')
-    # LOGGER.info(f'task_id:{sender.request.id} - task completed with result: {result}') # can't get celery.utils.log.get_task_logger to work
-    LOGGER.info(f'testing') # can't get celery.utils.log.get_task_logger to work
+    LOGGER.info(f'task_id:{sender.request.id} - task completed with result: {result}') # can't get celery.utils.log.get_task_logger to work
     return None
-
 
 # tasks
 
@@ -165,6 +167,5 @@ def sort_directory(self, fpaths: list) -> None:
 
 @app.task(bind=True)
 def add(self, x, y):
-    # logger.info(f'task_id:{self.request.id}, task_group:{self.request.group} - args=({x}, {y})') # can't get celery.utils.log.get_task_logger to work
-    LOGGER.info(f'args=({x}, {y})') # can't get celery.utils.log.get_task_logger to work
+    LOGGER.info(f'task request made, task.request:{dir(self.request)} - args=({x}, {y})')
     return x + y

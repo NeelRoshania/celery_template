@@ -19,7 +19,7 @@ from kombu.exceptions import OperationalError
 """
 
 # logging configurations
-logging.config.fileConfig('conf/logging.conf', defaults={'fileHandlerLog': f'logs/{__name__}.log', 'taskHandlerLog': f'logs/{__name__}.tasks.log'})
+logging.config.fileConfig('conf/logging.conf', defaults={'fileHandlerLog': f'logs/{__name__}.log'})
 
 LOGGER = logging.getLogger(__name__) # this will call the logger __main__ which will log to that referenced in python_template.__init__
 

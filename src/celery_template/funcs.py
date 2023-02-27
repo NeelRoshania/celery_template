@@ -1,6 +1,7 @@
+import datetime as dt
 import logging
-import os
 import math
+import os
 
 from celery_template.csv import write_csv
 from celery_template.psql import psql_connection
@@ -16,13 +17,13 @@ def get_duration(start_time, end_time) -> float:
     """
     return f'{end_time-start_time:.2f}'
 
-def next_retry(retries: int) -> float:
+def next_retry(retries: int) -> dt.datetime:
 
     """
         seconds to retrying the next task
 
     """
-    return math.exp(retries)
+    return (dt.datetime.now() + dt.timedelta(seconds=int(math.exp(retries))))
 
 def generate_test_data(data_dir: str) -> None:
 

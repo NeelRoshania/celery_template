@@ -89,7 +89,7 @@ def failed_task(self, prob: int, autoretry_for=(ZeroDivisionError,), retry_kward
         elif (prob < 0.2):
             prob/0
         else:
-            self.retry(exc=Exception, countdown=next_retry(self.request.retries))
+            self.retry(exc=Exception, eta=next_retry(self.request.retries))
 
     except ZeroDivisionError as e:
         LOGGER.info(f'task fail triggered - {e}')

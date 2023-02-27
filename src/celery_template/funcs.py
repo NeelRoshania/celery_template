@@ -12,7 +12,7 @@ def get_duration(start_time, end_time) -> float:
         start_time:  time in seconds since the epoch as a floating point number
         end_time:  time in seconds since the epoch as a floating point number
     """
-    return f'{end_time-start_time:.2f}s'
+    return f'{end_time-start_time:.2f}'
 
 def generate_test_data(data_dir: str) -> None:
 

@@ -57,7 +57,7 @@ def log_task_id(sender=None, result=None, **kwargs) -> tuple:
 
 # tasks
 
-@app.task(bind=True)
+# this shouldn't be a task - 
 def fetch_task_result(self, taskid: str) -> tuple:
     LOGGER.info(f'querying task: {taskid}')
     return AsyncResult(id=taskid, app=app)
@@ -194,7 +194,7 @@ def add(self, x, y):
 
     """
         A very simple task
-        
+
     """
     start_time = time.time()
     LOGGER.info(f'task.request:{dir(self.request)} - args=({x}, {y})')

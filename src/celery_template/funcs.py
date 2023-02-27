@@ -23,7 +23,8 @@ def next_retry(retries: int) -> dt.datetime:
         seconds to retrying the next task
 
     """
-    return (dt.datetime.now() + dt.timedelta(seconds=int(math.exp(retries))))
+    # return (dt.datetime.now() + dt.timedelta(seconds=int(math.exp(retries))))
+    return int(math.exp(retries))
 
 def generate_test_data(data_dir: str) -> None:
 

@@ -89,7 +89,7 @@ def failed_task(self, prob: int, autoretry_for=(ZeroDivisionError,), max_retries
     else:
         # retry with custom back_off
         raise self.retry(
-            eta=next_retry(self.request.retries), 
+            countdown=next_retry(self.request.retries), 
             # exc=Exception('0.2 <= prob <= 0.8')
         )
 

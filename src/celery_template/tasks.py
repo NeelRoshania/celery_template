@@ -52,7 +52,7 @@ def setup_task_logger(logger, *args, **kwargs):
 @task_success.connect
 def log_task_id(sender=None, result=None, **kwargs) -> tuple:
     print(f'{LOGGER.name}, handlers: {LOGGER.handlers}')
-    LOGGER.info(f'request_id type:{type(sender.request.id)} completed  with result: {type(result)}')
+    LOGGER.info(f'task success - sender:{type(sender)} completed with result: {type(result)}')
     return None
 
 # signal to handle task successes

@@ -4,7 +4,7 @@ import time
 
 from celery_template import app
 from celery_template.funcs import get_duration, exponential_backoff
-2, from celery_template.csv import read_csv
+from celery_template.csv import read_csv
 from celery_template.psql import connect_postgres
 from celery.app.log import TaskFormatter
 from celery.utils.log import get_task_logger
@@ -94,7 +94,7 @@ def failed_task(self, prob: int) -> dict:
 
         # If retried, will run the task with the intially supplied arguments unless..
         raise self.retry(
-            countdown=exponential_backoff(2, self.request.retries), # custom back-off
+            countdown=exponential_backoff(self.request.retries), # custom back-off
             max_retries=3,
             # retry_backoff=30,
             # retry_jitter=False,

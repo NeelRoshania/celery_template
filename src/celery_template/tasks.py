@@ -65,7 +65,7 @@ def retry_feedback(sender=None, request=None, reason=None, einfo=None, **kwargs)
 # tasks
 
 @app.task(bind=True)
-def failed_task(self, prob: int, autoretry_for=(ZeroDivisionError,)) -> dict:
+def failed_task(self, prob: int) -> dict:
 
     """
         A task that fails with arbitrary retry logic
@@ -91,9 +91,11 @@ def failed_task(self, prob: int, autoretry_for=(ZeroDivisionError,)) -> dict:
             prob/0
     
     except ZeroDivisionError as e:
+
+        # If retried, will run the task with the intially supplied arguments unless..
         raise self.retry(
             # countdown=next_retry(self.request.retries), # custom back-off
-            max_retries=10,
+            max_retries=3,
             retry_backoff=True,
             exc=e
         )

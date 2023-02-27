@@ -116,3 +116,12 @@ References
 3. Others
     - [subprocess](https://docs.python.org/3/library/subprocess.html#) - Subprocess Management
     - [Kill processes by command name](https://stackoverflow.com/questions/160924/how-can-i-kill-a-process-by-name-instead-of-pid-on-linux)
+
+Known Issues
+
+```
+raise error_for_code(
+amqp.exceptions.PreconditionFailed: (0, 0): (406) PRECONDITION_FAILED - delivery acknowledgement on channel 1 timed out. Timeout value used: 1800000 ms. This timeout value can be configured, see consumers doc guide to learn more
+
+```
+- encountered when attempting retries

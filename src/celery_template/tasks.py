@@ -65,7 +65,7 @@ def retry_feedback(sender=None, request=None, reason=None, einfo=None, **kwargs)
 # tasks
 
 @app.task(bind=True)
-def failed_task(self, prob: int, autoretry_for=(ZeroDivisionError,), max_retries=10, retry_backoff=True) -> dict:
+def failed_task(self, prob: int, autoretry_for=(ZeroDivisionError,)) -> dict:
 
     """
         A task that fails with arbitrary retry logic
@@ -74,23 +74,28 @@ def failed_task(self, prob: int, autoretry_for=(ZeroDivisionError,), max_retries
     start_time = time.time()
 
     # LOGGER.info(f'task.request:{dir(self.request)} - args=({x}, {y})')
-    if prob > 0.8:
-        LOGGER.info(f'no fail')
-        end_time = time.time()
-        return {
-            "task_description": 'failed_task',
-            "completed": True,
-            "duration": get_duration(start_time=start_time, end_time=end_time),
-            "result": prob
-        }
-    elif (prob < 0.2):
-        LOGGER.error(f'task failed - ZeroDivisionError')
-        prob/0
-    else:
-        # retry with custom back_off
+
+    try:
+
+        if prob > 0.8:
+            LOGGER.info(f'no fail')
+            end_time = time.time()
+            return {
+                "task_description": 'failed_task',
+                "completed": True,
+                "duration": get_duration(start_time=start_time, end_time=end_time),
+                "result": prob
+            }
+        else:
+            LOGGER.error(f'task failed - raising known exception ZeroDivisionError')
+            prob/0
+    
+    except ZeroDivisionError as e:
         raise self.retry(
-            countdown=next_retry(self.request.retries), 
-            # exc=Exception('0.2 <= prob <= 0.8')
+            # countdown=next_retry(self.request.retries), # custom back-off
+            max_retries=10,
+            retry_backoff=True,
+            exc=e
         )
 
 # this shouldn't be a task - 

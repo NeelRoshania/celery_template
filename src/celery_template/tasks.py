@@ -52,7 +52,7 @@ def setup_task_logger(logger, *args, **kwargs):
 @task_success.connect
 def log_task_id(sender=None, result=None, **kwargs) -> tuple:
     print(f'{LOGGER.name}, handlers: {LOGGER.handlers}')
-    LOGGER.info(f'task_request_id:{sender.request.id} completed in {result["duration"] }with result: {type(result)}')
+    LOGGER.info(f'task_request_id:{sender.request.id} completed in {result["duration"]} with result: {type(result)}')
     return None
 
 # tasks
@@ -191,5 +191,17 @@ def sort_directory(self, fpaths: list) -> None:
 
 @app.task(bind=True)
 def add(self, x, y):
+
+    """
+        A very simple task
+        
+    """
+    start_time = time.time()
     LOGGER.info(f'task.request:{dir(self.request)} - args=({x}, {y})')
-    return x + y
+    end_time = time.time()
+    return {
+        "task_description": 'add',
+        "completed": True,
+        "duration": get_duration(start_time=start_time, end_time=end_time),
+        "result": x+y
+    }

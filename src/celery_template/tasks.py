@@ -96,7 +96,9 @@ def failed_task(self, prob: int) -> dict:
         raise self.retry(
             # countdown=next_retry(self.request.retries), # custom back-off
             max_retries=3,
-            retry_backoff=True,
+            retry_backoff=30,
+            retry_jitter=False,
+            retry_backoff_max=6*50,
             exc=e
         )
 

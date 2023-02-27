@@ -148,7 +148,8 @@ def sort_list(self, fpath: str) -> dict:
     return {
         "task_description": 'single-sort',
         "completed": True,
-        "data": memoryview(array.array('l', lsorted)),
+        # "data": memoryview(array.array('l', lsorted)), # celery can't pickle this
+        # "data": memoryview(array.array('l', lsorted)),
     }
 
 @app.task(bind=True)
@@ -174,7 +175,7 @@ def sort_directory(self, fpaths: list) -> None:
     return {
         "task_description": 'sort-directory',
         "completed": True,
-        "data": memoryview(array.array('l', fsorted)),
+        # "data": memoryview(array.array('l', fsorted)), # celery cannot pickle this
     }
 
 @app.task(bind=True)

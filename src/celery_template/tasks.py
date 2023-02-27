@@ -58,14 +58,14 @@ def log_task_id(sender=None, result=None, **kwargs) -> tuple:
 # signal to handle task successes
 @task_retry.connect
 def retry_feedback(sender=None, request=None, reason=None, einfo=None, **kwargs) -> tuple:
-    LOGGER.info(f'task retrying, reason {reason}, einfo=({einfo})')
+    LOGGER.info(f'task retrying - {reason})')
     return None
 
 
 # tasks
 
 @app.task(bind=True)
-def failed_task(self, prob: int, autoretry_for=(ZeroDivisionError,), retry_kwargs={'max_retries': 10, 'retry_backoff': True}) -> dict:
+def failed_task(self, prob: int, autoretry_for=(ZeroDivisionError,), max_retries=10, retry_backoff=True}) -> dict:
 
     """
         A task that fails with arbitrary retry logic
@@ -90,7 +90,7 @@ def failed_task(self, prob: int, autoretry_for=(ZeroDivisionError,), retry_kwarg
         # retry with custom back_off
         raise self.retry(
             eta=next_retry(self.request.retries), 
-            exc=Exception('0.2 <= prob <= 0.8')
+            # exc=Exception('0.2 <= prob <= 0.8')
         )
 
 # this shouldn't be a task - 

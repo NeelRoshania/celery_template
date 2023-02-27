@@ -58,7 +58,7 @@ def log_task_id(sender=None, result=None, **kwargs) -> tuple:
 # signal to handle task successes
 @task_retry.connect
 def retry_feedback(sender=None, request=None, reason=None, einfo=None, **kwargs) -> tuple:
-    LOGGER.info(f'task failed with reason {reason} einfo=({einfo})')
+    LOGGER.info(f'task retrying, reason {reason}, einfo=({einfo})')
     return None
 
 

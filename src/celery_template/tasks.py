@@ -89,12 +89,27 @@ def failed_task(self, prob: int, autoretry_for=(ZeroDivisionError,), retry_kward
         elif (prob < 0.2):
             prob/0
         else:
-            self.retry(eta=next_retry(self.request.retries), exc=Exception('0.2 <= prob <= 0.8'))
+            self.retry(
+                eta=next_retry(self.request.retries), 
+                exc=Exception('0.2 <= prob <= 0.8')
+            )
 
     except ZeroDivisionError as e:
         LOGGER.info(f'task fail triggered - {e}')
+        return {
+                "task_description": 'failed_task',
+                "completed": False,
+                "duration": get_duration(start_time=start_time, end_time=end_time),
+                "result": prob
+            }
     except Exception as e:
         LOGGER.info(f'task fail triggered - {e}')
+        return {
+                "task_description": 'failed_task',
+                "completed": False,
+                "duration": get_duration(start_time=start_time, end_time=end_time),
+                "result": prob
+            }
 
 # this shouldn't be a task - 
 def fetch_task_result(self, taskid: str) -> tuple:

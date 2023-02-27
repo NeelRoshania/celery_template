@@ -17,14 +17,14 @@ def get_duration(start_time, end_time) -> float:
     """
     return f'{end_time-start_time:.2f}'
 
-def next_retry(retries: int) -> dt.datetime:
+def exponential_backoff(n0:int, retries: int) -> dt.datetime:
 
     """
         seconds to retrying the next task
 
     """
     # return (dt.datetime.now() + dt.timedelta(seconds=int(math.exp(retries))))
-    return int(math.exp(retries))
+    return n0**(2*retries)
 
 def generate_test_data(data_dir: str) -> None:
 

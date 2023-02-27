@@ -65,7 +65,7 @@ def retry_feedback(sender=None, request=None, reason=None, einfo=None, **kwargs)
 # tasks
 
 @app.task(bind=True)
-def failed_task(self, prob: int, autoretry_for=(ZeroDivisionError,), max_retries=10, retry_backoff=True}) -> dict:
+def failed_task(self, prob: int, autoretry_for=(ZeroDivisionError,), max_retries=10, retry_backoff=True) -> dict:
 
     """
         A task that fails with arbitrary retry logic

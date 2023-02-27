@@ -94,7 +94,7 @@ def failed_task(self, prob: int) -> dict:
 
         # If retried, will run the task with the intially supplied arguments unless..
         raise self.retry(
-            countdown=exponential_backoff(self.request.retries), # custom back-off
+            countdown=exponential_backoff(2, self.request.retries), # custom back-off
             max_retries=3,
             # retry_backoff=30,
             # retry_jitter=False,

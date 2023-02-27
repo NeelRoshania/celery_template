@@ -50,7 +50,7 @@ def setup_task_logger(logger, *args, **kwargs):
 @task_success.connect
 def log_task_id(sender=None, result=None, **kwargs) -> tuple:
     print(f'{LOGGER.name}, handlers: {LOGGER.handlers}')
-    LOGGER.info(f'task_request_id:{sender.request.id} completed with result: {result}')
+    LOGGER.info(f'task_request_id:{sender.request.id} completed with result: {type(result)}')
     return None
 
 # tasks
@@ -148,8 +148,8 @@ def sort_list(self, fpath: str) -> dict:
     return {
         "task_description": 'single-sort',
         "completed": True,
-        # "data": memoryview(array.array('l', lsorted)), # celery can't pickle this
-        # "data": memoryview(array.array('l', lsorted)),
+        "result": lsorted
+        # "result": memoryview(array.array('l', lsorted)), # celery can't pickle this
     }
 
 @app.task(bind=True)
@@ -168,14 +168,16 @@ def sort_directory(self, fpaths: list) -> None:
     for path in enumerate(fpaths):
         fsorted.append([
             path[1],
-            sort_list(fpath=path[1])["data"]
+            sort_list(fpath=path[1])["result"]
+            # sort_list(fpath=path[1])
             ]
         )
 
     return {
         "task_description": 'sort-directory',
         "completed": True,
-        # "data": memoryview(array.array('l', fsorted)), # celery cannot pickle this
+        "result": fsorted
+        # "result": memoryview(array.array('l', fsorted)), # celery cannot pickle this
     }
 
 @app.task(bind=True)

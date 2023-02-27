@@ -65,7 +65,7 @@ def retry_feedback(sender=None, request=None, reason=None, einfo=None, **kwargs)
 # tasks
 
 @app.task(bind=True)
-def failed_task(self, prob: int, autoretry_for=(ZeroDivisionError,), retry_kwards={'max_retries': 10}) -> dict:
+def failed_task(self, prob: int, autoretry_for=(ZeroDivisionError,), retry_kwargs={'max_retries': 10, 'retry_backoff': True}) -> dict:
 
     """
         A task that fails with arbitrary retry logic
@@ -74,46 +74,24 @@ def failed_task(self, prob: int, autoretry_for=(ZeroDivisionError,), retry_kward
     start_time = time.time()
 
     # LOGGER.info(f'task.request:{dir(self.request)} - args=({x}, {y})')
-
-    try:
-        
-        if prob > 0.8:
-            LOGGER.info(f'no fail')
-            end_time = time.time()
-            return {
-                "task_description": 'failed_task',
-                "completed": True,
-                "duration": get_duration(start_time=start_time, end_time=end_time),
-                "result": prob
-            }
-        elif (prob < 0.2):
-            prob/0
-        else:
-            self.retry(
-                eta=next_retry(self.request.retries), 
-                exc=Exception('0.2 <= prob <= 0.8')
-            )
-
-    except ZeroDivisionError as e:
-        LOGGER.info(f'task fail triggered - {e}')
+    if prob > 0.8:
+        LOGGER.info(f'no fail')
         end_time = time.time()
         return {
-                "task_description": 'failed_task',
-                "completed": False,
-                "duration": get_duration(start_time=start_time, end_time=end_time),
-                "result": prob,
-                "exception": 'zero-division'
-            }
-    except Exception as e:
-        LOGGER.info(f'task fail triggered - {e}')
-        end_time = time.time()
-        return {
-                "task_description": 'failed_task',
-                "completed": False,
-                "duration": get_duration(start_time=start_time, end_time=end_time),
-                "result": prob,
-                "exception": 'general-exception'
-            }
+            "task_description": 'failed_task',
+            "completed": True,
+            "duration": get_duration(start_time=start_time, end_time=end_time),
+            "result": prob
+        }
+    elif (prob < 0.2):
+        LOGGER.error(f'task failed - ZeroDivisionError')
+        prob/0
+    else:
+        # retry with custom back_off
+        raise self.retry(
+            eta=next_retry(self.request.retries), 
+            exc=Exception('0.2 <= prob <= 0.8')
+        )
 
 # this shouldn't be a task - 
 def fetch_task_result(self, taskid: str) -> tuple:

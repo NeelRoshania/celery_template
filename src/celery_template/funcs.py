@@ -5,6 +5,15 @@ from celery_template.psql import psql_connection
 
 LOGGER = logging.getLogger(__name__) # this calls the celery_template.funcs logger - which logs to worker node instance
 
+def get_duration(start_time, end_time) -> float:
+
+    """
+        Calculate duration in seconds
+        start_time:  time in seconds since the epoch as a floating point number
+        end_time:  time in seconds since the epoch as a floating point number
+    """
+    return f'{end_time-start_time:.2f}s'
+
 def generate_test_data(data_dir: str) -> None:
 
         """

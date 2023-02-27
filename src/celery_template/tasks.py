@@ -1,8 +1,9 @@
 import json
 import logging
-import array
+import time
 
-from celery_template import app, cparser
+from celery_template import app
+from celery_template.funcs import get_duration
 from celery_template.csv import read_csv
 from celery_template.psql import connect_postgres
 from celery.app.log import TaskFormatter
@@ -14,7 +15,8 @@ from celery.signals import task_success, after_setup_task_logger
     References
         - task requests, https://docs.celeryq.dev/en/stable/userguide/tasks.html#task-request
         - signals,  https://docs.celeryq.dev/en/stable/userguide/signals.html#signal-ref
-
+        - chain tasks together using thier signatures - https://docs.celeryq.dev/en/stable/userguide/tasks.html#task-synchronous-subtasks
+        
         - memoryview's (to deserialize data objects, and provide a method of exposing underlying data without copying)
             Certain objects available in Python wrap access to an underlying memory array or buffer. 
             Such objects include the built-in bytes and bytearray, and some extension types like array.array. 
@@ -50,7 +52,7 @@ def setup_task_logger(logger, *args, **kwargs):
 @task_success.connect
 def log_task_id(sender=None, result=None, **kwargs) -> tuple:
     print(f'{LOGGER.name}, handlers: {LOGGER.handlers}')
-    LOGGER.info(f'task_request_id:{sender.request.id} completed with result: {type(result)}')
+    LOGGER.info(f'task_request_id:{sender.request.id} completed in {result["duration"] }with result: {type(result)}')
     return None
 
 # tasks
@@ -132,6 +134,7 @@ def sort_list(self, fpath: str) -> dict:
         Sort one list object 
     """
 
+    start_time = time.time()
     lsorted = []
     headers, *data = read_csv(file_loc=fpath)
     LOGGER.info(f'sorting data in: {fpath}')
@@ -143,15 +146,18 @@ def sort_list(self, fpath: str) -> dict:
                         bubble_sort(l)
                     ]
         )
+    end_time = time.time()
 
     # exposing data to an object in memory is not recommended
     return {
         "task_description": 'single-sort',
         "completed": True,
+        "duration": get_duration(start_time=start_time, end_time=end_time),
         "result": lsorted
         # "result": memoryview(array.array('l', lsorted)), # celery can't pickle this
     }
 
+# this is a bad practice - chain tasks together using thier signatures - https://docs.celeryq.dev/en/stable/userguide/tasks.html#task-synchronous-subtasks
 @app.task(bind=True)
 def sort_directory(self, fpaths: list) -> None:
 
@@ -163,8 +169,9 @@ def sort_directory(self, fpaths: list) -> None:
 
     """
 
+    start_time = time.time()
     fsorted = []
-
+    
     for path in enumerate(fpaths):
         fsorted.append([
             path[1],
@@ -172,10 +179,12 @@ def sort_directory(self, fpaths: list) -> None:
             # sort_list(fpath=path[1])
             ]
         )
+    end_time = time.time()
 
     return {
         "task_description": 'sort-directory',
         "completed": True,
+        "duration": get_duration(start_time=start_time, end_time=end_time),
         "result": fsorted
         # "result": memoryview(array.array('l', fsorted)), # celery cannot pickle this
     }

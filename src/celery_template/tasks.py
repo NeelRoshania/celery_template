@@ -96,19 +96,23 @@ def failed_task(self, prob: int, autoretry_for=(ZeroDivisionError,), retry_kward
 
     except ZeroDivisionError as e:
         LOGGER.info(f'task fail triggered - {e}')
+        end_time = time.time()
         return {
                 "task_description": 'failed_task',
                 "completed": False,
                 "duration": get_duration(start_time=start_time, end_time=end_time),
-                "result": prob
+                "result": prob,
+                "exception": 'zero-division'
             }
     except Exception as e:
         LOGGER.info(f'task fail triggered - {e}')
+        end_time = time.time()
         return {
                 "task_description": 'failed_task',
                 "completed": False,
                 "duration": get_duration(start_time=start_time, end_time=end_time),
-                "result": prob
+                "result": prob,
+                "exception": 'general-exception'
             }
 
 # this shouldn't be a task - 

@@ -1,10 +1,11 @@
 import argparse
 import logging
 import logging.config
+import random
 
 from celery_template import app
 from celery_template.funcs import generate_test_data
-from celery_template.tasks import add, sort_list, sort_directory
+from celery_template.tasks import add, sort_list, sort_directory, failed_task
 from celery_template.csv import read_csv, write_csv
 from kombu.exceptions import OperationalError
 
@@ -41,6 +42,23 @@ def sequential_tasks(fpath: str, fpaths: str) -> None:
     except OperationalError as e: 
         LOGGER.error(f'app:{app} - failed to execute tasks - {e}')
 
+def retry_tasks() -> None:
+
+    LOGGER.info('starting tasks')
+
+    # catch operational errors - perhaps cannot send message to worker
+    try:
+
+        for i in enumerate(range(10)):
+            failed_task.apply_async(args=[random.random()], queue='celery_template_queue')
+            break
+        # [develop] save results once complete
+        LOGGER.info(f'tasks submitted')
+
+    except OperationalError as e: 
+        LOGGER.error(f'app:{app} - failed to execute tasks - {e}')
+
+
 if __name__ == "__main__":
 
     # parse arguments
@@ -55,7 +73,8 @@ if __name__ == "__main__":
     LOGGER.info(f'test data: {data_files}')
 
     # run tasks
-    sequential_tasks(fpath=data_files[0], fpaths=data_files)
+    # sequential_tasks(fpath=data_files[0], fpaths=data_files)
+    retry_tasks()
 
     
 

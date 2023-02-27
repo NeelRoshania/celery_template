@@ -3,13 +3,13 @@ import logging
 import time
 
 from celery_template import app
-from celery_template.funcs import get_duration
+from celery_template.funcs import get_duration, next_retry
 from celery_template.csv import read_csv
 from celery_template.psql import connect_postgres
 from celery.app.log import TaskFormatter
 from celery.utils.log import get_task_logger
 from celery.result import AsyncResult
-from celery.signals import task_success, after_setup_task_logger
+from celery.signals import task_success, task_retry, after_setup_task_logger
 
 """
     References
@@ -48,14 +48,53 @@ def setup_task_logger(logger, *args, **kwargs):
         handler.setFormatter(TaskFormatter('[%(asctime)s:%(task_id)s:%(task_name)s:%(name)s:%(levelname)s] %(message)s'))
     return None
 
-# signal to handle task successes
+# handle task successes
 @task_success.connect
 def log_task_id(sender=None, result=None, **kwargs) -> tuple:
     print(f'{LOGGER.name}, handlers: {LOGGER.handlers}')
-    LOGGER.info(f'task_request_id:{sender.request.id} completed in {result["duration"]} with result: {type(result)}')
+    LOGGER.info(f'task_request_id:{sender.request.id} completed in {result["duration"]}s with result: {type(result)}')
     return None
 
+# signal to handle task successes
+@task_retry.connect
+def retry_feedback(sender=None, request=None, reason=None, einfo=None, **kwargs) -> tuple:
+    LOGGER.info(f'task failed with reason {reason} einfo=({einfo})')
+    return None
+
+
 # tasks
+
+@app.task(bind=True)
+def failed_task(self, prob: int, autoretry_for=(ZeroDivisionError,), retry_kwards={'max_retries': 10}) -> dict:
+
+    """
+        A task that fails with arbitrary retry logic
+
+    """
+    start_time = time.time()
+
+    # LOGGER.info(f'task.request:{dir(self.request)} - args=({x}, {y})')
+
+    try:
+        
+        if prob > 0.8:
+            LOGGER.info(f'no fail')
+            end_time = time.time()
+            return {
+                "task_description": 'failed_task',
+                "completed": True,
+                "duration": get_duration(start_time=start_time, end_time=end_time),
+                "result": prob
+            }
+        elif (prob < 0.2):
+            prob/0
+        else:
+            self.retry(exc=Exception, countdown=next_retry(self.request.retries))
+
+    except ZeroDivisionError as e:
+        LOGGER.info(f'task fail triggered -{e}')
+    except Exception as e:
+        LOGGER.info(f'task fail triggered -{e}')
 
 # this shouldn't be a task - 
 def fetch_task_result(self, taskid: str) -> tuple:

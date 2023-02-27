@@ -1,5 +1,7 @@
 import logging
 import os
+import math
+
 from celery_template.csv import write_csv
 from celery_template.psql import psql_connection
 
@@ -14,29 +16,37 @@ def get_duration(start_time, end_time) -> float:
     """
     return f'{end_time-start_time:.2f}'
 
+def next_retry(retries: int) -> float:
+
+    """
+        seconds to retrying the next task
+
+    """
+    return math.exp(retries)
+
 def generate_test_data(data_dir: str) -> None:
 
-        """
-            No reservation made to captures missing directories
+    """
+        No reservation made to captures missing directories
 
-        """
-        import numpy as np
+    """
+    import numpy as np
 
-        LOGGER.info('generating test data')
+    LOGGER.info('generating test data')
 
-        values_one = [[0, np.random.randint(1000, size=int(5e3)).tolist()]]
-        values_many = [[i[0], np.random.randint(1000, size=int(5e3)).tolist()] for i in enumerate(range(10))]
+    values_one = [[0, np.random.randint(1000, size=int(5e3)).tolist()]]
+    values_many = [[i[0], np.random.randint(1000, size=int(5e3)).tolist()] for i in enumerate(range(10))]
 
-        write_csv(
-            file_loc=f'{data_dir}/testdata_singlelist_021923.csv', 
-            data=values_one, 
-            schema=['record_id', 'data']
-        )
+    write_csv(
+        file_loc=f'{data_dir}/testdata_singlelist_021923.csv', 
+        data=values_one, 
+        schema=['record_id', 'data']
+    )
 
-        write_csv(
-            file_loc=f'{data_dir}/testdata_many_021923.csv', 
-            data=values_many, 
-            schema=['record_id', 'data']
-        )
+    write_csv(
+        file_loc=f'{data_dir}/testdata_many_021923.csv', 
+        data=values_many, 
+        schema=['record_id', 'data']
+    )
 
-        return [f'{data_dir}/{f}' for f in os.listdir('tests/data') if f.endswith('.csv')]
+    return [f'{data_dir}/{f}' for f in os.listdir('tests/data') if f.endswith('.csv')]

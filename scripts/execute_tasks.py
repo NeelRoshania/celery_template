@@ -51,7 +51,7 @@ def retry_tasks() -> None:
 
         for i in enumerate(range(10)):
             failed_task.apply_async(args=[random.random()], queue='celery_template_queue')
-            break
+            # break
         # [develop] save results once complete
         LOGGER.info(f'tasks submitted')
 

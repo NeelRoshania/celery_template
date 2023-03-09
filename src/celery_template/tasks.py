@@ -87,10 +87,11 @@ def failed_task(self, prob: int) -> dict:
                 "result": prob
             }
         else:
-            LOGGER.error(f'task failed - raising known exception ZeroDivisionError')
-            prob/0
+            raise ZeroDivisionError('divide by zero not alowed - float division by zero') # raise a know exception
     
     except ZeroDivisionError as e:
+        
+        LOGGER.error(f'task failed - handling known exception ZeroDivisionError')
 
         # If retried, will run the task with the intially supplied arguments unless..
         raise self.retry(

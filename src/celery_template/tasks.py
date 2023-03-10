@@ -10,6 +10,7 @@ from celery.app.log import TaskFormatter
 from celery.utils.log import get_task_logger
 from celery.result import AsyncResult
 from celery.signals import task_success, task_retry, after_setup_task_logger
+from multiprocessing.dummy import Pool
 
 """
     References
@@ -217,7 +218,7 @@ def add(self, x, y):
 # regular functions
 def fetch_task_result(taskid: str) -> tuple:
     # LOGGER.info(f'querying task: {taskid}')
-    return AsyncResult(id=taskid, app=app)
+    return taskid, AsyncResult(id=taskid, app=app)
 
 def fetch_backend_taskresult(taskid: str) -> tuple:
 
@@ -259,13 +260,17 @@ def fetch_task_results(task_ids: list[str]) -> list:
 
     """
 
-    task_results = {task:None for task in task_ids} # note requested tasks
 
     LOGGER.info('retrieving tasks')
 
-    for task_id in task_ids:
-        res = fetch_task_result(task_id) 
-        task_results[task_id] = ([res.state, res.result, res.date_done])
+    with Pool() as pool:
+        results = pool.map(fetch_task_result, task_ids)
+
+    # task_results = {task:None for task in task_ids} # note requested tasks
+
+    # for task_id in task_ids:
+    #     res = fetch_task_result(task_id) 
+    #     task_results[task_id] = ([res.state, res.result, res.date_done])
     
     LOGGER.info('tasks retrieved')
-    return task_results
+    return results

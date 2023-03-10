@@ -216,7 +216,7 @@ def add(self, x, y):
 
 # regular functions
 def fetch_task_result(taskid: str) -> tuple:
-    LOGGER.info(f'querying task: {taskid}')
+    # LOGGER.info(f'querying task: {taskid}')
     return AsyncResult(id=taskid, app=app)
 
 def fetch_backend_taskresult(taskid: str) -> tuple:

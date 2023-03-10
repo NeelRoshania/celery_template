@@ -52,17 +52,17 @@ def retry_tasks(job_id: str) -> None:
     try:
 
         # generate tasks
-        for i in enumerate(range(10)):
+        for i in enumerate(range(10000)):
             tasks.append(
                 [
-                    i,
+                    i[0],
                     failed_task.apply_async(args=[random.random()], queue='celery_template_queue')
                 ]
             )
             # break
         
         # gather task results
-        write_csv(file_loc=f'tests/data/results/tasks_{job_id}.csv', data=list(tasks))
+        write_csv(file_loc=f'tests/data/results/jobs/tasks_{job_id}.csv', data=list(tasks))
 
         # [develop] save results once complete
         LOGGER.info(f'tasks submitted')
@@ -86,7 +86,7 @@ if __name__ == "__main__":
 
     # run tasks
     # sequential_tasks(fpath=data_files[0], fpaths=data_files)
-    retry_tasks(str(uuid.uuid1))
+    retry_tasks(str(uuid.uuid1()))
 
     
 

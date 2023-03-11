@@ -4,6 +4,7 @@ import logging.config
 import random
 import uuid
 
+from datetime import datetime
 from celery_template import app
 from celery_template.funcs import generate_test_data
 from celery_template.tasks import add, sort_list, sort_directory, failed_task, fetch_task_results
@@ -52,23 +53,25 @@ def retry_tasks(job_id: str) -> None:
     try:
 
         # generate tasks
-        for i in enumerate(range(10000)):
+        for i in enumerate(range(100)):
             tasks.append(
                 [
-                    i[0],
+                    datetime.utcnow(),
                     failed_task.apply_async(args=[random.random()], queue='celery_template_queue')
                 ]
             )
             # break
         
-        # gather task results
-        write_csv(file_loc=f'tests/data/results/jobs/tasks_{job_id}.csv', data=list(tasks))
-
-        # [develop] save results once complete
+        # save task results
+        write_csv(file_loc=f'tests/data/results/jobs/submitted/{job_id}.csv', data=list(tasks))
         LOGGER.info(f'tasks submitted')
+
+        return job_id, tasks
+
 
     except OperationalError as e: 
         LOGGER.error(f'app:{app} - failed to execute tasks - {e}')
+
 
 
 if __name__ == "__main__":
@@ -85,8 +88,10 @@ if __name__ == "__main__":
     LOGGER.info(f'test data: {data_files}')
 
     # run tasks
+
     # sequential_tasks(fpath=data_files[0], fpaths=data_files)
-    retry_tasks(str(uuid.uuid1()))
+    job_id, taskids = retry_tasks(str(uuid.uuid1()))
+
 
     
 

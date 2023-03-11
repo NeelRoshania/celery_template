@@ -217,7 +217,7 @@ def add(self, x, y):
 
 # regular functions
 def fetch_task_result(taskid: str) -> tuple:
-    # LOGGER.info(f'querying task: {taskid}')
+    #  _res.id, _res.state, _res.date_done, _res.result,
     return taskid, AsyncResult(id=taskid, app=app)
 
 def fetch_backend_taskresult(taskid: str) -> tuple:
@@ -260,17 +260,23 @@ def fetch_task_results(task_ids: list[str]) -> list:
 
     """
 
-
-    LOGGER.info('retrieving tasks')
-
     with Pool() as pool:
         results = pool.map(fetch_task_result, task_ids)
 
-    # task_results = {task:None for task in task_ids} # note requested tasks
-
-    # for task_id in task_ids:
-    #     res = fetch_task_result(task_id) 
-    #     task_results[task_id] = ([res.state, res.result, res.date_done])
-    
-    LOGGER.info('tasks retrieved')
     return results
+
+def await_jobtasks_completion(job_id: str, tasks:list) -> None:
+    
+    """
+        Continuously check task status and terminate when there are not more tasks being retried
+
+    """
+    LOGGER.info(f'checking task progress for job_id:{job_id}')
+    
+    while True:
+        res = fetch_task_results(tasks) 
+        if len([r[1].id for r in res if r[1].state == 'RETRY']) == 0:
+            break
+
+    LOGGER.info(f'all tasks complete')
+    return 

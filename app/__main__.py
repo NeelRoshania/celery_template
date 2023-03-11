@@ -25,3 +25,6 @@ if __name__ == "__main__":
                             # "--logfile=logs/celery.log"
                         ]
                     )
+    
+    # # starting a flower instance
+    # celery flower --port=5566

@@ -65,7 +65,7 @@ def job_handler(job_id: str) -> tuple:
         LOGGER.info(f'{job_id} - starting job')
         tasks_submitted = retry_tasks(job_id=job_id)
         taskids = [task[1] for task in tasks_submitted]
-        res = await_tasks_completion(tasks=taskids)
+        res = await_tasks_completion(taskids=taskids)
 
         # analysis 
         write_csv(file_loc=f'tests/data/results/jobs/submitted/{job_id}.csv', data=list(taskids)) # [date_started, task_id]

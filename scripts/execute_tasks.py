@@ -7,7 +7,7 @@ import uuid
 from datetime import datetime
 from celery_template import app
 from celery_template.funcs import generate_test_data
-from celery_template.tasks import add, sort_list, sort_directory, failed_task, fetch_task_results
+from celery_template.tasks import add, sort_list, sort_directory, failed_task, await_tasks_completion
 from celery_template.csv import read_csv, write_csv
 from kombu.exceptions import OperationalError
 
@@ -91,6 +91,8 @@ if __name__ == "__main__":
 
     # sequential_tasks(fpath=data_files[0], fpaths=data_files)
     job_id, taskids = retry_tasks(str(uuid.uuid1()))
+    tasks = [task[1] for task in taskids]
+    await_tasks_completion(tasks=taskids)
 
 
     

@@ -265,13 +265,13 @@ def fetch_task_results(task_ids: list[str]) -> list:
 
     return results
 
-def await_jobtasks_completion(job_id: str, tasks:list) -> None:
+def await_tasks_completion(tasks:list) -> None:
     
     """
         Continuously check task status and terminate when there are not more tasks being retried
 
     """
-    LOGGER.info(f'checking task progress for job_id:{job_id}')
+    LOGGER.info(f'checking status of tasks: {len(tasks)}')
     
     while True:
         res = fetch_task_results(tasks) 
@@ -279,4 +279,4 @@ def await_jobtasks_completion(job_id: str, tasks:list) -> None:
             break
 
     LOGGER.info(f'all tasks complete')
-    return 
+    return True

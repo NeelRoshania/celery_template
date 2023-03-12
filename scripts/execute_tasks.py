@@ -68,7 +68,6 @@ def retry_tasks(job_id: str) -> None:
 
         return job_id, tasks
 
-
     except OperationalError as e: 
         LOGGER.error(f'app:{app} - failed to execute tasks - {e}')
 
@@ -90,8 +89,8 @@ if __name__ == "__main__":
     # run tasks
 
     # sequential_tasks(fpath=data_files[0], fpaths=data_files)
-    job_id, taskids = retry_tasks(str(uuid.uuid1()))
-    tasks = [task[1] for task in taskids]
+    job_id, tasks = retry_tasks(str(uuid.uuid1()))
+    taskids = [task[1] for task in tasks]
     await_tasks_completion(tasks=taskids)
 
 

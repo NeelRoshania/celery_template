@@ -218,7 +218,8 @@ def add(self, x, y):
 # regular functions
 def fetch_task_result(taskid: str) -> tuple:
     #  _res.id, _res.state, _res.date_done, _res.result,
-    return taskid, AsyncResult(id=taskid, app=app)
+    _res = AsyncResult(id=taskid, app=app)
+    return taskid, _res.state, _res.date_done, _res.result
 
 def fetch_backend_taskresult(taskid: str) -> tuple:
 
@@ -275,8 +276,8 @@ def await_tasks_completion(tasks:list) -> None:
     
     while True:
         res = fetch_task_results(tasks) 
-        if len([r[1].id for r in res if r[1].state == 'RETRY']) == 0:
+        if len([r[0] for r in res if r[1] == 'RETRY']) == 0:
             break
 
     LOGGER.info(f'all tasks complete')
-    return True
+    return res

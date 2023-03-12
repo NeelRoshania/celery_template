@@ -63,8 +63,8 @@ def job_handler(job_id: str) -> tuple:
     """
     try:
         LOGGER.info(f'{job_id} - starting job')
-        tasks = retry_tasks(job_id=job_id)
-        taskids = [task[1] for task in tasks]
+        tasks_submitted = retry_tasks(job_id=job_id)
+        taskids = [task[1] for task in tasks_submitted]
         res = await_tasks_completion(tasks=taskids)
 
         # analysis 

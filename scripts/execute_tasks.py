@@ -62,7 +62,6 @@ def retry_tasks(job_id: str) -> None:
             )
             # break
         
-
         # save task results
         write_csv(file_loc=f'tests/data/results/jobs/submitted/{job_id}.csv', data=list(tasks))
         LOGGER.info(f'tasks submitted')
@@ -72,7 +71,7 @@ def retry_tasks(job_id: str) -> None:
     except OperationalError as e: 
         LOGGER.error(f'app:{app} - failed to execute tasks - {e}')
 
-
+def batch_task_submission(
 
 if __name__ == "__main__":
 
@@ -95,4 +94,4 @@ if __name__ == "__main__":
     job_id, tasks = retry_tasks(str(uuid.uuid1()))
     taskids = [task[1] for task in tasks]
     res = await_tasks_completion(tasks=taskids)
-    
+    write_csv(file_loc=f'tests/data/results/jobs/completed/{job_id}.csv', data=list(res)) 

@@ -10,6 +10,7 @@ from celery.app.log import TaskFormatter
 from celery.utils.log import get_task_logger
 from celery.result import AsyncResult
 from celery.signals import task_success, task_retry, after_setup_task_logger
+from kombu.exceptions import OperationalError
 from multiprocessing.dummy import Pool
 
 """
@@ -108,7 +109,6 @@ def failed_task(self, prob: int) -> dict:
 def sort_list(self, fpath: str) -> dict:
 
     """
-
         task is packaged to perform bubble_sort 
 
     """
@@ -215,11 +215,14 @@ def add(self, x, y):
         "result": x+y
     }
 
-# regular functions
+# non-tasks
+
 def fetch_task_result(taskid: str) -> tuple:
-    #  _res.id, _res.state, _res.date_done, _res.result,
     _res = AsyncResult(id=taskid, app=app)
-    return taskid, _res.state, _res.date_done, _res.result
+    if _res.state in ['SUCCESS', 'FAILURE']:
+        return taskid, _res.state, _res.date_done.isoformat(), _res.result
+    else:
+        return taskid, _res.state,
 
 def fetch_backend_taskresult(taskid: str) -> tuple:
 
@@ -266,18 +269,44 @@ def fetch_task_results(task_ids: list[str]) -> list:
 
     return results
 
-def await_tasks_completion(tasks:list) -> None:
+def await_tasks_completion(taskids: list) -> None:
     
     """
         Continuously check task status and terminate when there are not more tasks being retried
 
     """
-    LOGGER.info(f'checking status of tasks: {len(tasks)}')
+    LOGGER.info(f'checking status of tasks: {len(taskids)}')
     
     while True:
-        res = fetch_task_results(tasks) 
+        res = fetch_task_results(taskids) 
         if len([r[0] for r in res if r[1] == 'RETRY']) == 0:
             break
 
     LOGGER.info(f'all tasks complete')
     return res
+
+def hello_world(fpath: str, fpaths: str) -> None:
+
+    """
+        Submitting predefined tasks
+
+            # sequential tasks
+            data_files = generate_test_data(data_dir=data_dir)
+            hello_world(fpath=data_files[0], fpaths=data_files)
+    """
+
+    LOGGER.info('starting tasks')
+
+    # catch operational errors - perhaps cannot send message to worker
+    try:
+
+        # celery tasks expect serialized arguments, not objects - https://docs.celeryq.dev/en/stable/userguide/calling.html#serializers
+        t1 = add.apply_async(args=[5, 7], queue='celery_template_queue')
+        t2 = sort_list.apply_async(args=[fpath], queue='celery_template_queue')
+        t3 = sort_directory.apply_async(args=[fpaths], queue='celery_template_queue')
+
+        # [develop] save results once complete
+        LOGGER.info(f'tasks submitted')
+
+    except OperationalError as e: 
+        LOGGER.error(f'app:{app} - failed to execute tasks - {e}')

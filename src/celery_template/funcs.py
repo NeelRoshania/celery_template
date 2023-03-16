@@ -2,6 +2,7 @@ import datetime as dt
 import logging
 import math
 import os
+import random
 
 from celery_template.csv import write_csv
 from celery_template.psql import psql_connection
@@ -24,7 +25,7 @@ def exponential_backoff(n0:int, retries: int) -> dt.datetime:
 
     """
     # return (dt.datetime.now() + dt.timedelta(seconds=int(math.exp(retries))))
-    return n0**(2*retries)
+    return random.randint(0, n0**(2*retries))
 
 def generate_test_data(data_dir: str) -> None:
 

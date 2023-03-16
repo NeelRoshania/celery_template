@@ -90,3 +90,4 @@ if __name__ == "__main__":
     jobs = [str(uuid.uuid1()) for i in range(3)]
     for jobid in jobs:
         job_handler(jobid)
+        break

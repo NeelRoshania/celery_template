@@ -29,9 +29,9 @@ If you interact with a distributed queuing system, all tasks will take the same 
 	- backend: See PostgreSQL backend database setup
 7. Create a postgresql `celery_user` with `celery_pass` and `celery_db`
    	- log into `celery_db` with a privileged user.
-    	- `GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO celery_user;`
-   	- `GRANT USAGE, SELECT ON SEQUENCE task_id_sequence TO celery_user;`
-   	-  `GRANT USAGE, SELECT ON SEQUENCE taskset_id_sequence TO celery_user;`
+    		- `GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO celery_user;`
+   		- `GRANT USAGE, SELECT ON SEQUENCE task_id_sequence TO celery_user;`
+   		-  `GRANT USAGE, SELECT ON SEQUENCE taskset_id_sequence TO celery_user;`
 8. Ensure database and task modules defined correctly in `src/celery_template/__init__.py`
 9. Run psql connect and select tests
 	- `pytest -v tests/scripts/test_psqlconnect.py`

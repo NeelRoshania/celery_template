@@ -32,10 +32,11 @@ If you interact with a distributed queuing system, all tasks will take the same 
     	- `GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO celery_user;`
    	- `GRANT USAGE, SELECT ON SEQUENCE task_id_sequence TO celery_user;`
    	-  `GRANT USAGE, SELECT ON SEQUENCE taskset_id_sequence TO celery_user;`
-9. Ensure database and task modules defined correctly in `src/celery_template/__init__.py`
-8. Run psql connect and select tests
+8. Ensure database and task modules defined correctly in `src/celery_template/__init__.py`
+9. Run psql connect and select tests
 	- `pytest -v tests/scripts/test_psqlconnect.py`
 	- `pytest -v tests/scripts/test_psqlselect.py`
+10. Refer to Task Queue Setup for task submission testing. 
 
 If you run into issues with `psycopg2`, consider the following;
 1. `sudo chmod 774 psycopg2_setup.sh`
@@ -55,13 +56,13 @@ Submitting tasks
 1. Create role, database and assign privalages
 2. [Define connection string](https://docs.celeryq.dev/en/latest/userguide/configuration.html#database-backend-settings) per SQLAlchemy
 
-**Task Queue setup** (to be refined)
+**Task Queue Setup** (to be refined)
 1. Start services
     - postgresql: `service postgresql restart`
     - rabbitmq-server, `service rabbitmq-server restart`
 2. Check message queues: `rabbitmqctl list_queues name messages messages_ready messages_unacknowledged`
 3. Start worker, `celery -A celery_template worker --loglevel=INFO`
-4. Run tests
+4. Run tests for a specified queue,
 	- Run a task: `res = add.apply_async(args=(5, 7), queue="celery_template_queue")`
 	- Using Flower, check tasks & backend database - `celery_taskmeta`
     		- If new task_id's are not generated, 

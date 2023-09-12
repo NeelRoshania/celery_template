@@ -31,12 +31,14 @@ If you interact with a distributed queuing system, all tasks will take the same 
    	- log into `celery_db` with a privileged user.
     		- `GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO celery_user;`
    		- `GRANT USAGE, SELECT ON SEQUENCE task_id_sequence TO celery_user;`
-   		-  `GRANT USAGE, SELECT ON SEQUENCE taskset_id_sequence TO celery_user;`
-8. Ensure database and task modules defined correctly in `src/celery_template/__init__.py`
-9. Run psql connect and select tests
+   		- `GRANT USAGE, SELECT ON SEQUENCE taskset_id_sequence TO celery_user;`
+8. Ensure database configuration, task modules, and app task queues are defined correctly. See,
+	- `src/celery_template/__init__.py`
+	- `app/__main__.py`
+10. Run psql connect and select tests
 	- `pytest -v tests/scripts/test_psqlconnect.py`
 	- `pytest -v tests/scripts/test_psqlselect.py`
-10. Refer to Task Queue Setup for task submission testing. 
+11. Refer to Task Queue Setup for task submission testing. 
 
 If you run into issues with `psycopg2`, consider the following;
 1. `sudo chmod 774 psycopg2_setup.sh`
@@ -44,7 +46,7 @@ If you run into issues with `psycopg2`, consider the following;
 3. `pip3 install psycopg2`
 
 Starting a celery service
-- `app`: `python3 -m app` as a seperate screen
+- `app`: `python3 -m app` as a separate screen
 - celery `flower`: `celery -A celery_template flower --port=5566 --loglevel=INFO` as start task monitoring instance as a seperate screen
 
 Submitting tasks

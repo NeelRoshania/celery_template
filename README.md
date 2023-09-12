@@ -27,9 +27,10 @@ If you interact with a distributed queuing system, all tasks will take the same 
 6. Setup desired broker and backend 
 	- broker:`sudo apt-get install rabbitmq-server` then `sudo service rabbitmq-server restart`
 	- backend: See PostgreSQL backend database setup
-7. Create a `celery_user` with `celery_pass` and `celery_db`.
+7. Create a `celery_user` with `celery_pass` and `celery_db`
    	- log into `celery_db` with a privileged user.
     	- `GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO celery_user;`
+9. Ensure database and task modules defined correctly in `src/celery_template/__init__.py`
 8. Run psql connect and select tests
 	- `pytest -v tests/scripts/test_psqlconnect.py`
 	- `pytest -v tests/scripts/test_psqlselect.py`

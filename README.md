@@ -1,5 +1,5 @@
 # celery-template
-A template to manage workflows using a distributed task queue system
+A template to manage workflows using a distributed task queue system with a postgresql database.
 
 Features
 - TBD
@@ -27,7 +27,7 @@ If you interact with a distributed queuing system, all tasks will take the same 
 6. Setup desired broker and backend 
 	- broker:`sudo apt-get install rabbitmq-server` then `sudo service rabbitmq-server restart`
 	- backend: See PostgreSQL backend database setup
-7. Create a `celery_user` with `celery_pass` and `celery_db`
+7. Create a postgresql `celery_user` with `celery_pass` and `celery_db`
    	- log into `celery_db` with a privileged user.
     	- `GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO celery_user;`
    	- `GRANT USAGE, SELECT ON SEQUENCE task_id_sequence TO celery_user;`

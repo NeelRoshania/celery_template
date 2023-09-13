@@ -279,7 +279,7 @@ def await_tasks_completion(taskids: list) -> None:
     
     while True:
         res = fetch_task_results(taskids) 
-        if len([r[0] for r in res if r[1] == 'RETRY']) == 0:
+        if len([r[0] for r in res if r[1] in ('RETRY', 'PENDING')]) == 0:
             break
 
     LOGGER.info(f'all tasks complete')

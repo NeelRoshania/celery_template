@@ -5,8 +5,8 @@ import logging
 if __name__ == "__main__":
     
     parser = argparse.ArgumentParser()
-    parser.add_argument("config", type=str, action="store", default="conf/config.yaml", nargs="?") # need to define this
-    parser.add_argument("--flower", "-f", const=True, action="store_const")
+    # parser.add_argument("config", type=str, action="store", default="conf/config.yaml", nargs="?") # required
+    parser.add_argument("--concurrency", "-c", default=1) # optional
     args = parser.parse_args()
 
     LOGGER = logging.getLogger(__name__) # this logger is defined seperately, see logging.conf
@@ -22,9 +22,10 @@ if __name__ == "__main__":
                             "-Q",
                             "celery_template_queue",
                             "--loglevel=INFO",
+                            f'--concurrency={args.concurrency}',
                             # "--logfile=logs/celery.log"
                         ]
                     )
     
     # # starting a flower instance
-    # celery flower --port=5566
+    # celery -A celery_template flower --port=5566 --loglevel=INFO

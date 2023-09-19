@@ -1,5 +1,5 @@
 # celery-template
-A template to manage workflows using a distributed task queue system
+A template to manage workflows using a distributed task queue system with a postgresql database.
 
 Features
 - TBD
@@ -21,11 +21,24 @@ If you interact with a distributed queuing system, all tasks will take the same 
 **Module setup**
 1. `python3 -m venv .env` and `pip3 install --upgrade pip` 
 2. `cd .env/scripts ` then `activate`
-3. Modify `setup.cfg` and `src`
+3. Modify `src/setup.cfg` - change project name
 4. `pip3 install -e .`
-5. Setup desired broker and backend 
+5. Change `qualname` in `conf/logger.conf`
+6. Setup desired broker and backend 
 	- broker:`sudo apt-get install rabbitmq-server` then `sudo service rabbitmq-server restart`
 	- backend: See PostgreSQL backend database setup
+7. Create a postgresql `celery_user` with `celery_pass` and `celery_db`
+   	- log into `celery_db` with a privileged user.
+    		- `GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO celery_user;`
+   		- `GRANT USAGE, SELECT ON SEQUENCE task_id_sequence TO celery_user;`
+   		- `GRANT USAGE, SELECT ON SEQUENCE taskset_id_sequence TO celery_user;`
+8. Ensure database configuration, task modules, and app task queues are defined correctly. See,
+	- `src/celery_template/__init__.py`
+	- `app/__main__.py`
+10. Run psql connect and select tests
+	- `pytest -v tests/scripts/test_psqlconnect.py`
+	- `pytest -v tests/scripts/test_psqlselect.py`
+11. Refer to Task Queue Setup for task submission testing. 
 
 If you run into issues with `psycopg2`, consider the following;
 1. `sudo chmod 774 psycopg2_setup.sh`
@@ -33,7 +46,7 @@ If you run into issues with `psycopg2`, consider the following;
 3. `pip3 install psycopg2`
 
 Starting a celery service
-- `app`: `python3 -m app` as a seperate screen
+- `app`: `python3 -m app` as a separate screen
 - celery `flower`: `celery -A celery_template flower --port=5566 --loglevel=INFO` as start task monitoring instance as a seperate screen
 
 Submitting tasks
@@ -45,13 +58,13 @@ Submitting tasks
 1. Create role, database and assign privalages
 2. [Define connection string](https://docs.celeryq.dev/en/latest/userguide/configuration.html#database-backend-settings) per SQLAlchemy
 
-**Task Queue setup** (to be refined)
+**Task Queue Setup** (to be refined)
 1. Start services
     - postgresql: `service postgresql restart`
     - rabbitmq-server, `service rabbitmq-server restart`
 2. Check message queues: `rabbitmqctl list_queues name messages messages_ready messages_unacknowledged`
 3. Start worker, `celery -A celery_template worker --loglevel=INFO`
-4. Run tests
+4. Run tests for a specified queue,
 	- Run a task: `res = add.apply_async(args=(5, 7), queue="celery_template_queue")`
 	- Using Flower, check tasks & backend database - `celery_taskmeta`
     		- If new task_id's are not generated, 
